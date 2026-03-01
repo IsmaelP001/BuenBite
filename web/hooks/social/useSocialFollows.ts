@@ -37,10 +37,19 @@ export function useGetFollowers(userId: string, enabled = true) {
   });
 }
 
-export function useGetFollowing(userId: string, enabled = true) {
+interface UseGetFollowingOptions {
+  enabled?: boolean;
+  page?: string;
+  limit?: string;
+}
+
+export function useGetFollowing(
+  userId: string,
+  { enabled = true, page, limit }: UseGetFollowingOptions = {}
+) {
   return useQuery({
-    queryKey: ["social", "following", userId],
-    queryFn: async () => getSocialFollowing(userId),
+    queryKey: ["social", "following", userId, page, limit],
+    queryFn: async () => getSocialFollowing(userId, page, limit),
     enabled,
     select: (data) => data.data,
   });
