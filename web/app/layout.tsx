@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { getQueryClient } from "@/lib/queryClient";
 import { SupabaseProvider } from "@/components/SupabaseProvider";
 import { AuthProvider } from "@/lib/context/authContext";
+import { GamificationProvider } from "@/components/gamification/GamificationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,19 +35,21 @@ export default function RootLayout({
 
   return (
     <SupabaseProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <html lang="en">
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-              {children}
-              <Toaster />
-            </body>
-          </html>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <GamificationProvider>
+            <html lang="en">
+              <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+              >
+                {children}
+                <Toaster />
+              </body>
+            </html>
+          </GamificationProvider>
+        </AuthProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </SupabaseProvider>
   );
 }

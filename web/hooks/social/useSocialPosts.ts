@@ -7,11 +7,11 @@ import {
   likeSocialPost,
   unlikeSocialPost,
 } from "@/actions/social";
-import { CreatePostDto, UpdatePostDto } from "@/types/models/social";
+import { UpdatePostDto } from "@/types/models/social";
 
 export function useCreatePost() {
   return useAppMutation(
-    async (data: CreatePostDto) => createSocialPost(data),
+    async (data: FormData) => createSocialPost(data),
     {
       invalidateQueries: ["social"],
       toastConfig: {

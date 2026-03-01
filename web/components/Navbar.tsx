@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useSearchRecipes from "@/hooks/useSearchRecipes";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Image from "next/image";
 import {
   Sheet,
@@ -50,9 +50,13 @@ const RecipesMegaMenu = dynamic(() => import("./RecipesNavbarMenu"), {
 const PurchasesMegaMenu = dynamic(() => import("./PurchaseNavbarMenu"), {
   ssr: false,
 });
+const NavbarUserBadge = dynamic(
+  () => import("./gamification/NavbarUserBadge").then((m) => ({ default: m.NavbarUserBadge })),
+  { ssr: false }
+);
 interface NavLinkProps {
   href: string;
-  label: string;
+  label: ReactNode;
   className?: string;
 }
 
@@ -129,7 +133,10 @@ const NavLink = ({
   onClick,
 }: NavLinkComponentProps) => {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive =
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link
@@ -552,17 +559,11 @@ const Navbar = () => {
 
           <div
             className={cn(
-              "flex items-center gap-3 transition-all duration-300",
+              "relative z-20 flex items-center gap-3 transition-all duration-300",
               isSearchExpanded && "opacity-0 pointer-events-none"
             )}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hidden md:flex"
-            >
-              <User className="h-5 w-5" />
-            </Button>
+            <NavbarUserBadge />
 
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
