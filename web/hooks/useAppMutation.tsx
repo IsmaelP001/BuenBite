@@ -1,8 +1,7 @@
 'use client'
 import { toast } from "sonner";
-
-import { useHttpApiClient } from "@/services/apiClient";
 import {
+  QueryKey,
   useMutation,
   UseMutationOptions,
   useQueryClient,
@@ -37,12 +36,14 @@ interface UseAppMutationOptions<TData, TError, TVariables, TContext>
     UseMutationOptions<TData, TError, TVariables, TContext>,
     "mutationFn"
   > {
-  invalidateQueries?: string[] | string;
-  refetchQueries?: string[] | string;
+  invalidateQueries?: QueryKeyInput | QueryKeyInput[];
+  refetchQueries?: QueryKeyInput | QueryKeyInput[];
   showToasts?: boolean;
   toastConfig?: MutationToastConfig;
   toastVisibility?: ToastVisibilityConfig;
 }
+
+type QueryKeyInput = string | QueryKey;
 
 const DEFAULT_MESSAGES: Record<"success" | "error" | "loading", ToastConfig> = {
   success: {
@@ -86,6 +87,28 @@ function normalizeToastConfig(
     ...defaultConfig,
     ...config,
   };
+}
+
+function toQueryKeys(input?: QueryKeyInput | QueryKeyInput[]): QueryKey[] {
+  if (!input) return [];
+
+  if (!Array.isArray(input)) {
+    return [[input]];
+  }
+
+  if (input.length === 0) return [];
+
+  const hasNested = input.some(Array.isArray);
+  if (hasNested) {
+    return input as QueryKey[];
+  }
+
+  const allStrings = input.every((item) => typeof item === "string");
+  if (allStrings) {
+    return (input as string[]).map((item) => [item]);
+  }
+
+  return [input as QueryKey];
 }
 
 type MutationFn<TData, TVariables> = (
@@ -136,7 +159,7 @@ export function useAppMutation<
           DEFAULT_MESSAGES.loading
         );
         if (config) {
-          const id = showToast(config);
+          showToast(config);
         }
       }
 
@@ -162,22 +185,16 @@ export function useAppMutation<
       }
 
       if (options?.invalidateQueries) {
-        const keys = Array.isArray(options.invalidateQueries)
-          ? options.invalidateQueries
-          : [options.invalidateQueries];
-
-        keys.forEach((key) => {
-          queryClient.invalidateQueries({ queryKey: [key] });
+        const keys = toQueryKeys(options.invalidateQueries);
+        keys.forEach((queryKey) => {
+          queryClient.invalidateQueries({ queryKey });
         });
       }
 
       if (options?.refetchQueries) {
-        const keys = Array.isArray(options.refetchQueries)
-          ? options.refetchQueries
-          : [options.refetchQueries];
-
-        keys.forEach((key) => {
-          queryClient.refetchQueries({ queryKey: [key] });
+        const keys = toQueryKeys(options.refetchQueries);
+        keys.forEach((queryKey) => {
+          queryClient.refetchQueries({ queryKey });
         });
       }
 
@@ -214,10 +231,10 @@ export function useInvalidateQueries() {
   const queryClient = useQueryClient();
 
   return React.useCallback(
-    (keys: string[] | string) => {
-      const queryKeys = Array.isArray(keys) ? keys : [keys];
-      queryKeys.forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key] });
+    (keys: QueryKeyInput[] | QueryKeyInput) => {
+      const queryKeys = toQueryKeys(keys);
+      queryKeys.forEach((queryKey) => {
+        queryClient.invalidateQueries({ queryKey });
       });
     },
     [queryClient]

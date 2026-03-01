@@ -1,12 +1,12 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
+import { createSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const [supabase] = useState(() => createClient())
+  const [supabase] = useState(() => createSupabaseClient())
 
   useEffect(() => {
     // 1. Supabase automáticamente inicia el timer de refresh aquí

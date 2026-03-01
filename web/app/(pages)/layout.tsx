@@ -20,14 +20,14 @@ export default function Layout({ children }: { children: ReactNode }) {
     staleTime: 6 * 60 * 60 * 1000,
   });
 
-  const { data: userPreferences, isPending } = useQuery({
+  const { data: userPreferences, isPending, status } = useQuery({
     queryKey: ["user_preferences"],
     queryFn: async () => apiClient.userService.getUserPreferences(),
     staleTime: 6 * 60 * 60 * 1000,
   });
 
   useEffect(() => {
-    if (!userPreferences && !isPending) {
+    if (status === "success" && !userPreferences && !isPending) {
       const skippedUntil = localStorage.getItem(SKIP_KEY);
       
       if (skippedUntil) {
@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         router.push("/onboarding");
       }
     }
-  }, [userPreferences, isPending, router]);
+  }, [userPreferences, isPending, status, router]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
