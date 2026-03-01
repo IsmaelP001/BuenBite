@@ -1,10 +1,10 @@
 import { ApiResponse } from "@/types";
 import { getSession } from "@/actions/auth";
 
-export const API_SERVER_URL = "http://192.168.1.10:3002/api";
+export const API_SERVER_URL = "http://192.168.1.14:3003/api";
 // export const API_SERVER_URL = process.env.API_URL!;
 
-// export const API_SERVER_URL = "http://172.20.10.6:3002/api";
+// export const API_SERVER_URL = "http://172.20.10.6:3003/api";
 const AUTH_API_KEY = process.env.API_KEY;
 
 interface RequestOptions {
@@ -20,23 +20,31 @@ interface SessionData {
 
 export class HttpClient {
   private static sessionData: SessionData | null = null;
-  private static sessionPromise: Promise<SessionData> | null = null;
 
   constructor() {}
+
+  private static async fetchSessionData(): Promise<SessionData> {
+    const sessionResponse = await getSession();
+    const session = sessionResponse?.data?.session ?? null;
+
+    return {
+      token: session?.access_token ?? "",
+      userId: session?.user.id ?? "",
+    };
+  }
 
   // Obtiene token y userId de forma lazy
   public static async getSessionData(): Promise<SessionData> {
     if (this.sessionData) return this.sessionData;
-    const {
-      data: { session },
-    } = await getSession();
 
+    const sessionData = await this.fetchSessionData();
 
-    const sessionData = {
-      token: session?.access_token ?? "",
-      userId: session?.user.id ?? "",
-    };
-    this.sessionData = sessionData;
+    // Solo cachear cuando existe token para evitar quedarse "pegado"
+    // en estado guest después de un login OAuth.
+    if (sessionData.token) {
+      this.sessionData = sessionData;
+    }
+
     return sessionData;
   }
 
@@ -54,7 +62,6 @@ export class HttpClient {
 
   public static resetSession(): void {
     this.sessionData = null;
-    this.sessionPromise = null;
   }
 
   // Getter síncrono (retorna null si no está cargado)
@@ -68,7 +75,7 @@ export class HttpClient {
 
   private buildUrl(
     endpoint: string,
-    queryParams?: Record<string, string | number>
+    queryParams?: Record<string, string | number>,
   ): string {
     const url = `${API_SERVER_URL}/${endpoint}`;
 
@@ -106,7 +113,7 @@ export class HttpClient {
 
   private async executeRequest<T>(
     url: string,
-    options: RequestInit
+    options: RequestInit,
   ): Promise<ApiResponse<T>> {
     try {
       const response = await fetch(url, options);
@@ -132,7 +139,7 @@ export class HttpClient {
 
   async get<T>(
     endpoint: string,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(endpoint, options?.queryParams);
     const headers = await this.getHeaders(options);
@@ -145,7 +152,7 @@ export class HttpClient {
   async post<T>(
     endpoint: string,
     body?: object | FormData,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(endpoint, options?.queryParams);
     const headers = await this.getHeaders(options);
@@ -160,7 +167,7 @@ export class HttpClient {
   async put<T>(
     endpoint: string,
     body?: object,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(endpoint, options?.queryParams);
     const headers = await this.getHeaders(options);
@@ -174,7 +181,7 @@ export class HttpClient {
   async patch<T>(
     endpoint: string,
     body?: object,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(endpoint, options?.queryParams);
     const headers = await this.getHeaders(options);
@@ -187,7 +194,7 @@ export class HttpClient {
 
   async delete<T>(
     endpoint: string,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiResponse<T>> {
     const url = this.buildUrl(endpoint, options?.queryParams);
     const headers = await this.getHeaders(options);
