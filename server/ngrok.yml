@@ -1,0 +1,11 @@
+version: "2"
+authtoken: your_auth_token_here
+tunnels:
+  api:
+    proto: http
+    addr: 3001
+    schemes:
+      - https
+    headers:
+      - "ngrok-skip-browser-warning: true"
+    inspect: false
