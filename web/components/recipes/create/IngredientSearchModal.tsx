@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CreateRecipeIngredientDto } from "@/types/models/recipes";
 import { Ingredient } from "@/types/models/ingredient";
 import useGetIngredients from "@/hooks/useGetIngredients";
 import useCreateIngredient from "@/hooks/useCreateIngredient";
@@ -26,7 +25,7 @@ import { NewRecipeIngredient } from "@/hooks/useCreateRecipe";
 interface IngredientSearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddIngredient: (ingredient: CreateRecipeIngredientDto) => void;
+  onAddIngredient: (ingredient: NewRecipeIngredient) => void;
 }
 
 type ModalStep = "search" | "select" | "create";

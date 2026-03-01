@@ -6,6 +6,7 @@ export interface Instruction {
 }
 
 export interface CreateRecipeDto {
+  parentRecipeId?: string;
   name: string;
   description?: string;
   prepTime?: number;
@@ -60,6 +61,7 @@ export interface GetRecentlyViewdRecipes {
 export interface RecipeItem {
   id: string;
   userId: string;
+  parentRecipeId?: string | null;
   name: string;
   totalTime: number;
   description: string | null;

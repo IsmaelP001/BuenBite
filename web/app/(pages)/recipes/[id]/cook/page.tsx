@@ -47,8 +47,6 @@ const CookRecipe = () => {
   });
 
 
-  console.log('orig servings main',servings)
-
   const handleNextStep = () => {
     if (isLastStep) {
       setShowConfirmModal(true);
