@@ -16,8 +16,11 @@ export async function createPantryItem(dto: CreatePantryDto[]) {
   return apiClient.pantryService.createPantryItem(dto);
 }
 
-export async function getPantryTransactions(pantryId: string) {
-  return apiClient.pantryService.getPantryTransactions(pantryId);
+export async function getPantryTransactions(
+  pantryId: string,
+  pagination?: { page?: number; limit?: number },
+) {
+  return apiClient.pantryService.getPantryTransactions(pantryId, pagination);
 }
 
 export async function registerPendingPurchase(data: PendingPurchase) {
@@ -27,3 +30,6 @@ export async function updatePantryItem(data: Partial<PantryItem>) {
   return apiClient.pantryService.updatePantryItem(data);
 }
 
+export async function softDeletePantryItem(itemId: string) {
+  return apiClient.pantryService.softDeletePantryItem(itemId);
+}

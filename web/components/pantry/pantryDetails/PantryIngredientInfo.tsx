@@ -1,4 +1,5 @@
 "use client";
+import { softDeletePantryItem } from "@/actions/pantry";
 import QuantityInput from "@/components/QuantityInput";
 import { Button } from "@/components/ui/button";
 import useGetPantryDetails from "@/hooks/getPantryDetails";
@@ -13,7 +14,9 @@ import {
   ShoppingCart,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const categoryColors: Record<string, string> = {
   Lácteos: "bg-blue-500",
@@ -25,10 +28,12 @@ const categoryColors: Record<string, string> = {
 
 export default function PantryIngredientInfo() {
   const { data: pantryItem, isPending } = useGetPantryDetails();
+  const router = useRouter();
   const [isEditingPantry, setIsEditingPantry] = useState(false);
   const [pantryAmount, setPantryAmount] = useState(0);
   const [isEditingPurchase, setIsEditingPurchase] = useState(false);
   const [tempPurchaseAmount, setTempPurchaseAmount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { mutate: updatePantryMutation, isPending: isSaving } =
     UseUpdatePantryItem();
@@ -50,6 +55,25 @@ export default function PantryIngredientInfo() {
       </div>
     );
   }
+
+  const handleDeletePantryItem = async () => {
+    const confirmed = window.confirm(
+      "¿Seguro que quieres eliminar este item de tu despensa?"
+    );
+    if (!confirmed) return;
+
+    try {
+      setIsDeleting(true);
+      await softDeletePantryItem(pantryItem.id);
+      toast.success("Item eliminado de despensa");
+      router.push("/pantry");
+      router.refresh();
+    } catch {
+      toast.error("No se pudo eliminar el item");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <section className="mb-10 animate-fade-in">
@@ -168,6 +192,18 @@ export default function PantryIngredientInfo() {
                 Sin stock en despensa
               </p>
             )}
+          </div>
+
+          <div className="mt-4">
+            <Button
+              variant="destructive"
+              onClick={handleDeletePantryItem}
+              disabled={isDeleting}
+              className="inline-flex items-center gap-2"
+            >
+              <X className="h-4 w-4" />
+              {isDeleting ? "Eliminando..." : "Eliminar item"}
+            </Button>
           </div>
 
           {/* Quick Stats Row */}

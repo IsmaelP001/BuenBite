@@ -19,6 +19,9 @@ import { AddedIngredientsList } from "@/components/purchases/history/addIngredie
 import { CreatePantryDto } from "@/types/models/pantry";
 import useCreatePantry from "@/hooks/useCreatePantry";
 import { useRouter } from "next/navigation";
+import useGetFilterActiveIngredients from "@/hooks/useGetFilterActiveIngredients";
+import { QuickIngredientSuggestions } from "@/components/pantry/create/QuickIngredientSuggestions";
+import { useMemo } from "react";
 
 export interface NewIngredientForm {
   name: string;
@@ -42,13 +45,13 @@ const PantryCreate = () => {
       editingId,
       showCreateForm,
       newIngredient,
-      isFormValid,
     },
     form: { setQuantity, setUnit, setExpiryDate },
     actions: {
       selectIngredient,
       updateSearchQuery,
       addIngredient,
+      quickAddIngredient,
       updateIngredientQuantity,
       updateIngredientUnit,
       removeIngredient,
@@ -64,7 +67,15 @@ const PantryCreate = () => {
   const {  ingredients, isPending } = useGetIngredients({
     searchValue: searchQuery,
   });
+  const {
+    data: suggestedIngredients = [],
+    isPending: isLoadingSuggestions,
+  } = useGetFilterActiveIngredients();
   const router = useRouter()
+  const addedIngredientIds = useMemo(
+    () => new Set(addedIngredients.map((item) => item.ingredient.id)),
+    [addedIngredients]
+  );
   const noResults =
     searchQuery.length > 2 && !isPending && ingredients?.length === 0;
 
@@ -114,6 +125,13 @@ const PantryCreate = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <QuickIngredientSuggestions
+                  suggestions={suggestedIngredients}
+                  isPending={isLoadingSuggestions}
+                  addedIngredientIds={addedIngredientIds}
+                  onQuickAdd={quickAddIngredient}
+                />
+
                 <SearchBar value={searchQuery} onChange={updateSearchQuery} />
 
                 {searchQuery.length > 0 && !selectedIngredient && (

@@ -40,8 +40,8 @@ export default async function PurchaseDetail({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <MaxWidthWrapper className="py-3">
-        <div className="space-y-3 animate-fade-in">
-          <div className="flex items-center justify-between flex-wrap">
+        <div className="space-y-3 animate-fade-in purchase-history-page">
+          <div className="flex items-center justify-between flex-wrap no-print purchase-page-header">
            <Link href='/purchases/history'>
             <Button variant="ghost" className="gap-2">
               <ArrowLeft className="w-4 h-4" />
@@ -61,7 +61,7 @@ export default async function PurchaseDetail({
             </div>
           </div>
 
-          <Card className="print-container">
+          <Card className="print-container no-print">
             <CardHeader >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>

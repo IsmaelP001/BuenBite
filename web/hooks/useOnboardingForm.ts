@@ -107,6 +107,44 @@ const NutritionPlanInputSchema = z
 
 const TOTAL_STEPS = 4;
 
+type NutritionMetricsPayload = {
+  age: number;
+  gender: "male" | "female" | "other";
+  currentWeight: number;
+  weightUnit: "kg" | "lbs";
+  height: number;
+  heightUnit: "cm" | "inches";
+  primaryGoal: "lose_weight" | "maintain_weight" | "gain_weight" | "build_muscle";
+  weightChangePace: "slow" | "moderate" | "aggressive";
+  activityLevel:
+    | "sedentary"
+    | "lightly_active"
+    | "moderately_active"
+    | "very_active"
+    | "extremely_active";
+  breakfastTime: string;
+  lunchTime: string;
+  dinnerTime: string;
+  dietType: "balanced" | "low_carb" | "keto" | "vegetarian" | "vegan" | "high-protein" | "mediterranean";
+};
+
+const getErrorMessage = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const err = error as { message?: string | string[]; error?: string };
+    if (Array.isArray(err.message) && err.message.length > 0) {
+      return err.message.join(", ");
+    }
+    if (typeof err.message === "string" && err.message.trim()) {
+      return err.message;
+    }
+    if (typeof err.error === "string" && err.error.trim()) {
+      return err.error;
+    }
+  }
+  return "Error al guardar las preferencias. Inténtalo de nuevo.";
+};
+
 export function useOnboardingForm() {
   const router = useRouter();
   const { mutateAsync, isPending } = useSetUpUserNutritionalMetrics();
@@ -118,7 +156,11 @@ export function useOnboardingForm() {
   // ==================== STATE ====================
 
   const updateData = (updates: Partial<OnboardingData>) => {
-    setData((prev) => ({ ...prev, ...updates }));
+    const normalizedUpdates = { ...updates } as Partial<OnboardingData>;
+    if (normalizedUpdates.physicalGoal && !normalizedUpdates.primaryGoal) {
+      normalizedUpdates.primaryGoal = normalizedUpdates.physicalGoal;
+    }
+    setData((prev) => ({ ...prev, ...normalizedUpdates }));
     // Limpiar errores al actualizar datos
     setValidationErrors([]);
   };
@@ -207,12 +249,41 @@ export function useOnboardingForm() {
     if (!validateFinal()) return;
 
     try {
-      const res = await mutateAsync(data);
+      const payload: NutritionMetricsPayload = {
+        age: data.age as number,
+        gender: data.gender as "male" | "female" | "other",
+        currentWeight: data.weight as number,
+        weightUnit: data.weightUnit,
+        height: data.height as number,
+        heightUnit: data.heightUnit,
+        primaryGoal: data.primaryGoal as
+          | "lose_weight"
+          | "maintain_weight"
+          | "gain_weight"
+          | "build_muscle",
+        weightChangePace: (data.weightChangePace ?? "moderate") as
+          | "slow"
+          | "moderate"
+          | "aggressive",
+        activityLevel: data.activityLevel as
+          | "sedentary"
+          | "lightly_active"
+          | "moderately_active"
+          | "very_active"
+          | "extremely_active",
+        breakfastTime: data.breakfastTime,
+        lunchTime: data.lunchTime,
+        dinnerTime: data.dinnerTime,
+        // Backend requiere dietType en creación de métricas.
+        dietType: "balanced",
+      };
+
+      const res = await mutateAsync(payload);
 
       toast.success("¡Plan de comida creado exitosamente!");
-      router.push(`/calories-tracking/onboarding/${res.data.id}`);
-    } catch {
-      toast.error("Error al guardar las preferencias. Inténtalo de nuevo.");
+      router.push(`/tracking/onboarding/${res.data.id}`);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
     }
   };
 

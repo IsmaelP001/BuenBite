@@ -60,11 +60,17 @@ export const useIngredientSelection = () => {
 
   const addIngredient = useCallback(() => {
     if (!selectedIngredient || !quantity) return false;
+    const parsedQuantity = parseFloat(quantity);
+    if (Number.isNaN(parsedQuantity) || parsedQuantity <= 0) return false;
+    const alreadyAdded = addedIngredients.some(
+      (item) => item.ingredient.id === selectedIngredient.id
+    );
+    if (alreadyAdded) return false;
 
     const newItem: PantryIngredientInput = {
       id: `${selectedIngredient.id}-${Date.now()}`,
       ingredient: selectedIngredient,
-      quantity: parseFloat(quantity),
+      quantity: parsedQuantity,
       unit,
       expiryDate,
       addedAt: new Date().toISOString(),
@@ -73,7 +79,27 @@ export const useIngredientSelection = () => {
     setAddedIngredients((prev) => [...prev, newItem]);
     resetForm();
     return true;
-  }, [selectedIngredient, quantity, unit, expiryDate, resetForm]);
+  }, [selectedIngredient, quantity, unit, expiryDate, resetForm, addedIngredients]);
+
+  const quickAddIngredient = useCallback((ingredient: Ingredient) => {
+    const alreadyAdded = addedIngredients.some(
+      (item) => item.ingredient.id === ingredient.id
+    );
+    if (alreadyAdded) return false;
+
+    const defaultUnit = ingredient?.conversions?.allowed_units?.[0] || "";
+    const newItem: PantryIngredientInput = {
+      id: `${ingredient.id}-${Date.now()}`,
+      ingredient,
+      quantity: 1,
+      unit: defaultUnit,
+      expiryDate: null,
+      addedAt: new Date().toISOString(),
+    };
+
+    setAddedIngredients((prev) => [...prev, newItem]);
+    return true;
+  }, [addedIngredients]);
 
   const updateIngredientQuantity = useCallback((id: string, newQuantity: string) => {
     setAddedIngredients((prev) =>
@@ -159,6 +185,7 @@ export const useIngredientSelection = () => {
       selectIngredient,
       updateSearchQuery,
       addIngredient,
+      quickAddIngredient,
       updateIngredientQuantity,
       updateIngredientUnit,
       removeIngredient,

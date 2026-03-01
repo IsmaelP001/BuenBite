@@ -61,11 +61,11 @@ export const GoalActivityStep = ({ data, onChange }: GoalActivityStepProps) => {
               <button
                 key={id}
                 type="button"
-                onClick={() => onChange({ physicalGoal: id })}
+                onClick={() => onChange({ primaryGoal: id })}
                 className={cn(
                   "flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left",
                   "hover:border-primary/50 hover:bg-primary/5",
-                  data.physicalGoal === id
+                  data.primaryGoal === id
                     ? "border-primary bg-primary/10"
                     : "border-border"
                 )}
@@ -73,7 +73,7 @@ export const GoalActivityStep = ({ data, onChange }: GoalActivityStepProps) => {
                 <div
                   className={cn(
                     "p-2 rounded-lg",
-                    data.physicalGoal === id
+                    data.primaryGoal === id
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
                   )}
@@ -83,7 +83,7 @@ export const GoalActivityStep = ({ data, onChange }: GoalActivityStepProps) => {
                 <span
                   className={cn(
                     "font-medium",
-                    data.physicalGoal === id ? "text-primary" : "text-foreground"
+                    data.primaryGoal === id ? "text-primary" : "text-foreground"
                   )}
                 >
                   {label}
