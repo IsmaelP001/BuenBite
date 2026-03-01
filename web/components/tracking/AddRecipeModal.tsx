@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Clock, Flame, Plus, Check } from "lucide-react";
+import { Search, Clock, Flame, Plus, Check, Circle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,14 @@ interface AddRecipeModalProps {
 }
 
 type TabsTypes = "recommended" | "user-recipes" | "saved-recipes";
+
+function LoaderStateTab() {
+  return (
+    <div className="grid place-content-center min-h-[500px]">
+      <Circle className="animate-spin" />
+    </div>
+  );
+}
 
 interface TabsContentContainerProps {
   recipes: RecommendedRecipe[];
@@ -172,16 +180,14 @@ const AddRecipeModal = ({ isOpen, onClose, mealType }: AddRecipeModalProps) => {
           <TabsList>
             <TabsTrigger value="recommended">Recomendadas</TabsTrigger>
             <TabsTrigger value="user-recipes">Mis recetas</TabsTrigger>
-            <TabsTrigger value="saved-recipes">Mis recetas</TabsTrigger>
+            <TabsTrigger value="saved-recipes">Guardadas</TabsTrigger>
           </TabsList>
           <TabsContent
             className="overflow-y-auto flex flex-col h-screen"
             value="recommended"
           >
             {isFetchingRecommended ? (
-              <div>
-                <p>Cargando...</p>
-              </div>
+              <LoaderStateTab />
             ) : (
               <TabsContentContainer
                 recipes={recommendedByPantry ?? []}
@@ -198,9 +204,7 @@ const AddRecipeModal = ({ isOpen, onClose, mealType }: AddRecipeModalProps) => {
             value="user-recipes"
           >
             {isFetchingUserRecipes ? (
-              <div>
-                <p>Cargando...</p>
-              </div>
+              <LoaderStateTab />
             ) : (
               <TabsContentContainer
                 recipes={userRecipes ?? []}
@@ -217,9 +221,7 @@ const AddRecipeModal = ({ isOpen, onClose, mealType }: AddRecipeModalProps) => {
             value="saved-recipes"
           >
             {isFetchingUserSaved ? (
-              <div>
-                <p>Cargando...</p>
-              </div>
+              <LoaderStateTab />
             ) : (
               <TabsContentContainer
                 recipes={userSavedRecipes ?? []}
@@ -259,20 +261,20 @@ function RecipeModalCard({
         "w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-200 text-left",
         isSelected
           ? "bg-primary/10 border-2 border-primary"
-          : "bg-secondary/50 hover:bg-secondary border-2 border-transparent"
+          : "bg-secondary/50 hover:bg-secondary border-2 border-transparent",
       )}
     >
       <div className="relative">
         <div className="w-16 h-16 bg-gray-200 rounded-lg">
           {recipe?.image && (
-          <Image
-            src={recipe.image}
-            alt={recipe.name}
-            width={300}
-            height={300}
-            className="w-full h-full rounded-lg object-cover"
-          />
-        )}
+            <Image
+              src={recipe.image}
+              alt={recipe.name}
+              width={300}
+              height={300}
+              className="w-full h-full rounded-lg object-cover"
+            />
+          )}
         </div>
         {isSelected && (
           <div className="absolute inset-0 bg-primary/80 rounded-lg flex items-center justify-center">

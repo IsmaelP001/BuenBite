@@ -20,6 +20,8 @@ import IngredientsContainer from "@/components/recipes/recipeDetails/Ingredients
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import RecipeDeleteButton from "@/components/recipes/RecipeDeleteButton";
+import RecipeVariantsManager from "@/components/recipes/recipeDetails/RecipeVariantsManager";
 
 interface RecipeDetailProps {
   params: Promise<{
@@ -83,6 +85,11 @@ const RecipeDetail = async ({ params }: RecipeDetailProps) => {
               <h1 className="font-display text-3xl md:text-4xl font-bold mb-4">
                 {recipe.name}
               </h1>
+              {recipe.isAuthor && (
+                <div className="mb-4">
+                  <RecipeDeleteButton recipeId={recipe.id} />
+                </div>
+              )}
               {recipe.description && (
                 <p className="text-muted-foreground text-lg mb-6">
                   {recipe.description}
@@ -176,6 +183,8 @@ const RecipeDetail = async ({ params }: RecipeDetailProps) => {
                 </div>
               </div>
             </div>
+
+            <RecipeVariantsManager recipe={recipe} />
 
             <div className="bg-card rounded-xl p-6 shadow-sm border">
               <h2 className="font-display text-xl font-semibold mb-6">

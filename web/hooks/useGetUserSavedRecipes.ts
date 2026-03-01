@@ -1,5 +1,5 @@
-'use client'
-import {useMemo } from "react";
+"use client";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSavedRecipes } from "@/actions/recipes";
 
@@ -12,22 +12,28 @@ export default function useGetUserSavedRecipe({
   selectedMealType,
   isDisabled = false,
 }: UseGetUserSavedRecipeProps) {
-
   const { data: allRecipes, ...queryRest } = useQuery({
-    queryKey:['user-favorites-recipes'],
+    queryKey: ["user-favorites-recipes"],
     queryFn: async () => getUserSavedRecipes(),
-    enabled:!isDisabled,
+    enabled: !isDisabled,
   });
 
-
   const filteredRecipes = useMemo(() => {
-    if (!allRecipes?.data?.length) return [];
-    if (!selectedMealType || selectedMealType === "all")
-      return allRecipes?.data;
-    return allRecipes?.data?.filter(
-      (recipe) =>
-        recipe.mealTypes && recipe.mealTypes.includes(selectedMealType)
+    const allRecipesData = allRecipes?.data || [];
+    allRecipesData.sort(
+      (a, b) => b.completionPercentage - a.completionPercentage,
     );
+
+    if (!selectedMealType || selectedMealType === "all") {
+      return allRecipesData;
+    }
+
+    const recipesFiltered = allRecipesData.filter(
+      (recipe) =>
+        recipe.mealTypes && recipe.mealTypes.includes(selectedMealType),
+    );
+
+    return recipesFiltered;
   }, [allRecipes, selectedMealType]);
 
   return {

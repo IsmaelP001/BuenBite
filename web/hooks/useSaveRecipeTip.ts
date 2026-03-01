@@ -1,22 +1,19 @@
 import { useHttpApiClient } from "@/services/apiClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
-interface SubmitRating {
+interface SaveRecipeTipInput {
   recipeId: string;
   tip: string;
+  image?: File | null;
 }
 
 export function useSaveRecipeTip() {
   const apiClient = useHttpApiClient();
   const queryClient = useQueryClient();
-  const router = useRouter();
-  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
 
-  const { mutate: saveRecipeRatingMutation, isPending } = useMutation({
+  const { mutateAsync: saveRecipeTipMutation, isPending } = useMutation({
     mutationFn: async (data: FormData) =>
-      await apiClient.recipeService.saveRecipTip(data),
+      await apiClient.recipeService.saveRecipeTip(data),
     onSuccess(data, input) {
       queryClient.invalidateQueries({
         queryKey: ["recipe_most_recent_tip", input.get("recipeId")],
@@ -24,34 +21,22 @@ export function useSaveRecipeTip() {
       queryClient.invalidateQueries({
         queryKey: ["recipe_tips", input.get("recipeId")],
       });
-      router.push(`/recepies/${input.get("recipeId")}`);
     },
   });
 
-  const handleSaveTip = (data: SubmitRating) => {
+  const handleSaveTip = async (data: SaveRecipeTipInput) => {
     const formData = new FormData();
-    if (uploadedImage) {
-      formData.append("image", uploadedImage);
+    if (data.image) {
+      formData.append("image", data.image);
     }
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    saveRecipeRatingMutation(formData);
-  };
+    formData.append("recipeId", data.recipeId);
+    formData.append("tip", data.tip);
 
-  const handleUploadImage = (file: File) => {
-    setUploadedImage(file);
-  };
-
-  const clearImage = () => {
-    setUploadedImage(null);
+    return saveRecipeTipMutation(formData);
   };
 
   return {
-    handleUploadImage,
     isPending,
     handleSaveTip,
-    uploadedImage,
-    clearImage,
   };
 }

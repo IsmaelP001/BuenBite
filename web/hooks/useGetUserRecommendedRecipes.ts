@@ -1,5 +1,5 @@
-'use client'
-import {  useMemo } from "react";
+"use client";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRecommendedRecipes } from "@/actions/recipes";
 
@@ -23,12 +23,14 @@ export default function useGetUserRecommended({
   });
 
   const filteredRecipes = useMemo(() => {
-    if (!allRecipes?.data?.length) return [];
-    if (!selectedMealType || selectedMealType === "all")
-      return allRecipes?.data;
-    return allRecipes?.data?.filter(
-      (recipe: any) =>
-        recipe.mealTypes && recipe.mealTypes.includes(selectedMealType)
+    const allRecipesData = allRecipes?.data || [];
+    allRecipesData.sort(
+      (a, b) => b.completionPercentage - a.completionPercentage,
+    );
+    if (!selectedMealType || selectedMealType === "all") return allRecipesData;
+    return allRecipesData.filter(
+      (recipe) =>
+        recipe.mealTypes && recipe.mealTypes.includes(selectedMealType),
     );
   }, [allRecipes, selectedMealType]);
 

@@ -23,7 +23,6 @@ import {
   RecipeTip,
   RecipeTipFilter,
   RecommendedRecipe,
-  RegisterRecipeAsCooked,
   RemoveMealPlanEntry,
   ScheduleRecipeMealPlan,
   SearchRecipe,
@@ -33,9 +32,6 @@ import {
 const sessionId = "b69ea9f4-65da-46c9-b1ae-a983cea91e27";
 
 export class RecipeService {
-  getUserNutricionalHistory() {
-    throw new Error("Method not implemented.");
-  }
   constructor(private httpClient: HttpClient) {}
 
   async getRecipeSuggestedRecipesIngredients(
@@ -51,6 +47,10 @@ export class RecipeService {
 
   async getRecipeById(recipeId: string): Promise<ApiResponse<RecipeItem>> {
     return this.httpClient.get<RecipeItem>(`recipes/${recipeId}`);
+  }
+
+  async getRecipeVariants(recipeId: string): Promise<ApiResponse<RecipeItem[]>> {
+    return this.httpClient.get<RecipeItem[]>(`recipes/${recipeId}/variants`);
   }
 
   async getRecipeByIdWithPantry(
@@ -85,6 +85,10 @@ export class RecipeService {
       ...data,
       userId: HttpClient.getCurrentUserId(),
     });
+  }
+
+  async softDeleteRecipe(recipeId: string): Promise<ApiResponse<RecipeItem>> {
+    return this.httpClient.put<RecipeItem>(`recipes/${recipeId}/soft-delete`);
   }
 
   async getCommunityRecipes(): Promise<ApiResponse<RecipeItem[]>> {
@@ -134,7 +138,7 @@ export class RecipeService {
     });
   }
 
-  async saveRecipTip(recipeTip: FormData): Promise<ApiResponse<void>> {
+  async saveRecipeTip(recipeTip: FormData): Promise<ApiResponse<void>> {
     return this.httpClient.post("recipes/tips", recipeTip, {
       isFormDataType: true,
     });
@@ -199,30 +203,8 @@ export class RecipeService {
   }
 
   async saveRecipeCooked(
-    data: RegisterRecipeAsCooked
+    formData: FormData
   ): Promise<ApiResponse<any[]>> {
-    const formData = new FormData();
-
-    formData.append("recipeId", data.recipeId);
-    formData.append("ingredients", JSON.stringify(data.ingredients));
-    formData.append("servings", data.servings.toString());
-
-    if (data?.image) {
-      formData.append("image", data.image);
-    }
-
-    if (data?.notes) {
-      formData.append("notes", data.notes);
-    }
-
-    if (data?.rating) {
-      formData.append("rating", data.rating.toString());
-    }
-
-    if (data?.mealPlanEntryId) {
-      formData.append("mealPlanEntryId", data.mealPlanEntryId);
-    }
-
     return this.httpClient.post<RegisterUsedIngredient[]>(
       `recipes/register-cook`,
       formData,
