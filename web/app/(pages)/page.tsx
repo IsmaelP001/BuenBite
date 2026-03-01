@@ -50,6 +50,8 @@ export default async function Home() {
   const user = await getUser();
   const isLoggedIn = !!user;
 
+  console.log("User in Home page:", user);
+
   return (
     <div className="min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black py-5">
       {isLoggedIn && (

@@ -39,7 +39,6 @@ export default function usePantryBasedRecommendedRecipes({
       return (lastPage?.page ?? 1) + 1;
     },
     select(data) {
-
       let recipes = data.pages.flatMap((item) => item.data);
 
       const sort = searchParams.get("sort");
@@ -51,12 +50,12 @@ export default function usePantryBasedRecommendedRecipes({
         } else if (availability === "almost") {
           recipes = recipes.filter(
             (item) =>
-              completitionValue(item) > 70 && completitionValue(item) < 99
+              completitionValue(item) > 70 && completitionValue(item) < 99,
           );
         } else if (availability === "partial") {
           recipes = recipes.filter(
             (item) =>
-              completitionValue(item) > 30 && completitionValue(item) < 70
+              completitionValue(item) > 30 && completitionValue(item) < 70,
           );
         }
       }
@@ -66,9 +65,13 @@ export default function usePantryBasedRecommendedRecipes({
           recipes = recipes.sort((a, b) => a.totalTime - b.totalTime);
         } else if (sort === "availability") {
           recipes = recipes.sort(
-            (a, b) => b.completionPercentage - a.completionPercentage
+            (a, b) => b.completionPercentage - a.completionPercentage,
           );
         }
+      } else {
+        recipes = recipes.sort(
+          (a, b) => b.completionPercentage - a.completionPercentage,
+        );
       }
 
       return recipes;

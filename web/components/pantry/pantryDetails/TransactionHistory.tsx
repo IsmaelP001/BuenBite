@@ -48,7 +48,14 @@ const formatDateTime = (dateString: string) => {
 };
 
 export default function TransactionHistory() {
-  const { data: pantryTransactions } = useGetPantryTransactions();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetPantryTransactions();
+
+  const pantryTransactions = data?.pages.flatMap((page) => page?.data ?? []) ?? [];
 
   return (
     <div className="bg-card rounded-xl p-6 shadow-sm border">
@@ -96,6 +103,18 @@ export default function TransactionHistory() {
           </div>
         ))}
       </div>
+
+      {hasNextPage && (
+        <div className="mt-4 flex justify-center">
+          <button
+            className="px-4 py-2 rounded-lg border border-border hover:bg-secondary/40 transition-colors text-sm"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? "Cargando..." : "Ver más"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

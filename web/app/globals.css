@@ -147,3 +147,162 @@
     @apply px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1;
   }
 }
+
+/* ─── Gamification Animations ─────────────────────────────────────────────── */
+
+@keyframes gamification-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0); }
+}
+
+.gamification-pulse {
+  animation: gamification-pulse 2s ease-in-out 1;
+}
+
+@keyframes achievement-glow-anim {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+.achievement-glow {
+  animation: achievement-glow-anim 2s ease-in-out infinite;
+}
+
+@keyframes achievement-badge-bounce-anim {
+  0% { transform: scale(0.5) rotate(-10deg); }
+  50% { transform: scale(1.15) rotate(3deg); }
+  70% { transform: scale(0.95) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.achievement-badge-bounce {
+  animation: achievement-badge-bounce-anim 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Particles for level-up celebration */
+.achievement-particles {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+@keyframes particle-fly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform:
+      translate(
+        calc(cos(calc(var(--i) / var(--total) * 360deg)) * 80px),
+        calc(sin(calc(var(--i) / var(--total) * 360deg)) * 80px)
+      )
+      scale(0);
+    opacity: 0;
+  }
+}
+
+.achievement-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  animation: particle-fly 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: calc(var(--i) * 60ms);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .purchase-history-page .purchase-page-header,
+  .purchase-history-page .print-container,
+  .purchase-history-page .no-print {
+    display: none !important;
+  }
+
+  .purchase-history-page .ingredients-print-sheet {
+    display: block !important;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 24mm 18mm;
+    background: #ffffff;
+    color: #1c2430;
+    font-family: "Times New Roman", Georgia, serif;
+    box-sizing: border-box;
+  }
+
+  .purchase-history-page .ingredients-print-header {
+    border-bottom: 1.5px solid #102a43;
+    padding-bottom: 10mm;
+    margin-bottom: 10mm;
+  }
+
+  .purchase-history-page .ingredients-print-brand {
+    margin: 0 0 3mm;
+    color: #0f766e;
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .purchase-history-page .ingredients-print-header h1 {
+    margin: 0 0 3mm;
+    color: #102a43;
+    font-size: 24pt;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .purchase-history-page .ingredients-print-meta,
+  .purchase-history-page .ingredients-print-date {
+    margin: 0;
+    color: #486581;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+
+  .purchase-history-page .ingredients-print-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .purchase-history-page .ingredients-print-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4mm 0;
+    border-bottom: 1px solid #d9e2ec;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .purchase-history-page .ingredients-print-item-name {
+    font-size: 12pt;
+    color: #102a43;
+  }
+
+  .purchase-history-page .ingredients-print-item-amount {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #243b53;
+    white-space: nowrap;
+  }
+}
+
+.print-only {
+  display: none;
+}

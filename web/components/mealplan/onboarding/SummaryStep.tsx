@@ -53,7 +53,7 @@ export const SummaryStep = ({ data, onEdit }: SummaryStepProps) => {
   ];
 
   const goalItems = [
-    { label: 'Objetivo', value: data.physicalGoal ? goalLabels[data.physicalGoal].label : '-' },
+    { label: 'Objetivo', value: data.primaryGoal ? goalLabels[data.primaryGoal].label : '-' },
     { label: 'Ritmo', value: data.weightChangePace ? paceLabels[data.weightChangePace].label : 'N/A' },
     { label: 'Actividad', value: data.activityLevel ? activityLabels[data.activityLevel].label : '-' },
   ];
