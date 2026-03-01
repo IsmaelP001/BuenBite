@@ -60,6 +60,7 @@ export interface CreatePostDto {
   content: string;
   image?: string;
   recipeId?: string;
+  metadata?: Record<string, unknown> | null;
   postType?: PostType;
   isPublic?: boolean;
 }
@@ -120,6 +121,15 @@ export interface SocialStats {
   longestStreak: number;
   level: UserLevel;
   xp: number;
+  globalLevel: number;
+  globalLevelName: string;
+}
+
+export interface SocialGamificationSummary {
+  userId: string;
+  totalXp: number;
+  globalLevel: number;
+  globalLevelName: string;
 }
 
 export interface SocialProfile {
@@ -255,7 +265,9 @@ export interface SearchUser {
   userId: string;
   fullName: string;
   avatarUrl: string | null;
-  level: UserLevel;
+  level: string;
+  globalLevelName: string;
+  totalExp: number;
 }
 
 // ─── Masteries ────────────────────────────────────────────────────────────────

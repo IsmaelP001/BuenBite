@@ -1,6 +1,6 @@
 "use client";
 import { getSocialExplore, searchSocialUsers, getSocialInsights } from "@/actions/social";
-import { ExploreFilters, ExplorePeriod, SearchUsersFilters } from "@/types/models/social";
+import { ExploreFilters, SearchUsersFilters } from "@/types/models/social";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGetExplore(filters?: ExploreFilters) {
@@ -11,13 +11,29 @@ export function useGetExplore(filters?: ExploreFilters) {
   });
 }
 
-export function useSearchUsers(query: string, enabled = true) {
-  const filters: SearchUsersFilters = { q: query, limit: "20" };
+interface UseSearchUsersFilters {
+  query?: string;
+  page?: number;
+  limit?: number;
+  enabled?: boolean;
+}
+
+export function useSearchUsers({
+  query = "",
+  page = 1,
+  limit = 20,
+  enabled = true,
+}: UseSearchUsersFilters = {}) {
+  const filters: SearchUsersFilters = {
+    q: query,
+    page: String(page),
+    limit: String(limit),
+  };
+
   return useQuery({
-    queryKey: ["social", "search", "users", query],
+    queryKey: ["social", "search", "users", query, page, limit],
     queryFn: async () => searchSocialUsers(filters),
-    enabled: enabled && query.length >= 2,
-    select: (data) => data.data,
+    enabled,
   });
 }
 

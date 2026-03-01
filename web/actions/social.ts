@@ -2,7 +2,6 @@
 import { ApiClient } from "@/services/apiClient";
 import {
   CreateCommentDto,
-  CreatePostDto,
   ExploreFilters,
   FeedFilters,
   NotificationFilters,
@@ -19,7 +18,7 @@ export async function getSocialFeed(filters?: FeedFilters) {
 }
 
 // ─── Posts ─────────────────────────────────────────────────────────────────────
-export async function createSocialPost(data: CreatePostDto) {
+export async function createSocialPost(data: FormData) {
   return apiClient.socialService.createPost(data);
 }
 

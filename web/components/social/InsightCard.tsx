@@ -9,48 +9,87 @@ interface InsightCardProps {
   insight: SocialInsight;
 }
 
-const insightConfig: Record<string, { icon: React.ReactNode; gradient: string; border: string }> = {
+const insightConfig = {
   followers_cooked: {
-    icon: <Users className="w-5 h-5" aria-hidden="true" />,
-    gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30",
-    border: "border-blue-200 dark:border-blue-800/40",
+    icon: Users,
+    accent: "text-blue-500 dark:text-blue-400",
+    iconBg: "bg-blue-100 dark:bg-blue-500/15",
+    bar: "bg-blue-500",
+    countColor: "text-blue-600 dark:text-blue-400",
+    border: "border-l-blue-500",
   },
   ingredients_available: {
-    icon: <ShoppingBasket className="w-5 h-5" aria-hidden="true" />,
-    gradient: "from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30",
-    border: "border-green-200 dark:border-green-800/40",
+    icon: ShoppingBasket,
+    accent: "text-emerald-500 dark:text-emerald-400",
+    iconBg: "bg-emerald-100 dark:bg-emerald-500/15",
+    bar: "bg-emerald-500",
+    countColor: "text-emerald-600 dark:text-emerald-400",
+    border: "border-l-emerald-500",
   },
   expiring_ingredients: {
-    icon: <AlertTriangle className="w-5 h-5" aria-hidden="true" />,
-    gradient: "from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30",
-    border: "border-amber-200 dark:border-amber-800/40",
+    icon: AlertTriangle,
+    accent: "text-amber-500 dark:text-amber-400",
+    iconBg: "bg-amber-100 dark:bg-amber-500/15",
+    bar: "bg-amber-500",
+    countColor: "text-amber-600 dark:text-amber-400",
+    border: "border-l-amber-500",
   },
-};
+} satisfies Record<string, {
+  icon: React.ElementType;
+  accent: string;
+  iconBg: string;
+  bar: string;
+  countColor: string;
+  border: string;
+}>;
 
 export default function InsightCard({ insight }: InsightCardProps) {
-  const config = insightConfig[insight.type] || insightConfig.followers_cooked;
+  const config = insightConfig[insight.type as keyof typeof insightConfig] ?? insightConfig.followers_cooked;
+  const Icon = config.icon;
 
   return (
-    <Card className={cn("overflow-hidden", config.border)}>
-      <CardContent className={cn("p-4 bg-linear-to-r flex items-center gap-3", config.gradient)}>
-        <div className="shrink-0 w-10 h-10 rounded-full bg-white/60 dark:bg-white/10 flex items-center justify-center text-foreground">
-          {config.icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground leading-snug">{insight.message}</p>
-          {insight.count && (
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {insight.count} {insight.count === 1 ? "elemento" : "elementos"}
+    <Card
+      className={cn(
+        "overflow-hidden border-l-[3px] shadow-none rounded-lg transition-shadow hover:shadow-sm py-3 ",
+        config.border
+      )}
+    >
+      <CardContent className="p-0">
+        <div className="flex items-center gap-2.5 px-3">
+          {/* Icon */}
+          <div className={cn("shrink-0 w-7 h-7 rounded-md flex items-center justify-center", config.iconBg)}>
+            <Icon className={cn("w-3.5 h-3.5", config.accent)} aria-hidden="true" />
+          </div>
+
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-medium text-foreground leading-tight truncate">
+              {insight.message}
             </p>
+            {insight.count != null && (
+              <p className={cn("text-[11px] font-semibold tabular-nums mt-0.5", config.countColor)}>
+                {insight.count} {insight.count === 1 ? "elemento" : "elementos"}
+              </p>
+            )}
+          </div>
+
+          {/* CTA */}
+          {insight.recipeId && (
+            <Link href={`/recipes/${insight.recipeId}`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "shrink-0 h-6 w-6 rounded-md",
+                  "hover:bg-foreground/8 dark:hover:bg-white/10"
+                )}
+                aria-label="Ver receta"
+              >
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+              </Button>
+            </Link>
           )}
         </div>
-        {insight.recipeId && (
-          <Link href={`/recipes/${insight.recipeId}`}>
-            <Button variant="ghost" size="icon" className="shrink-0 h-8 w-8 rounded-full hover:bg-white/60 dark:hover:bg-white/10" aria-label="Ver receta">
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Button>
-          </Link>
-        )}
       </CardContent>
     </Card>
   );

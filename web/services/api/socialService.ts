@@ -3,7 +3,6 @@ import { ApiResponse } from "@/types";
 import {
   Achievement,
   CreateCommentDto,
-  CreatePostDto,
   ExploreData,
   ExploreFilters,
   FeedFilters,
@@ -17,6 +16,7 @@ import {
   SharedRecipe,
   SocialComment,
   SocialInsight,
+  SocialGamificationSummary,
   SocialNotification,
   SocialPost,
   SocialProfile,
@@ -37,8 +37,10 @@ export class SocialService {
   }
 
   // ─── Posts ──────────────────────────────────────────────────────────────
-  async createPost(data: CreatePostDto): Promise<ApiResponse<SocialPost>> {
-    return this.httpClient.post<SocialPost>("social/posts", data);
+  async createPost(data: FormData): Promise<ApiResponse<SocialPost>> {
+    return this.httpClient.post<SocialPost>("social/posts", data, {
+      isFormDataType: true,
+    });
   }
 
   async updatePost(postId: string, data: UpdatePostDto): Promise<ApiResponse<SocialPost>> {
@@ -119,6 +121,10 @@ export class SocialService {
 
   async getStats(userId: string): Promise<ApiResponse<SocialStats>> {
     return this.httpClient.get<SocialStats>(`social/profile/${userId}/stats`);
+  }
+
+  async getGamificationSummary(userId: string): Promise<ApiResponse<SocialGamificationSummary>> {
+    return this.httpClient.get<SocialGamificationSummary>(`social/profile/${userId}/gamification`);
   }
 
   async updateBio(bio: string): Promise<ApiResponse<void>> {
