@@ -3,7 +3,6 @@ import { ApiClient } from "@/services/apiClient";
 import {
   GetPantryBasedRecommendedRecipesParams,
   RecipeTipFilter,
-  RegisterRecipeAsCooked,
   SearchRecipeFilters,
 } from "@/types/models/recipes";
 
@@ -33,6 +32,10 @@ export async function getPantryBasedRecommendedRecipes(
 
 export async function getRecipeById(recipeId: string) {
   return apiClient.recipeService.getRecipeById(recipeId);
+}
+
+export async function getRecipeVariants(recipeId: string) {
+  return apiClient.recipeService.getRecipeVariants(recipeId);
 }
 
 export async function getAllRecipes(queryParams: Record<string, any>) {
@@ -80,6 +83,10 @@ export async function getUserRecommendedRecipes() {
   return apiClient.recipeService.getUserRecommendedRecipes();
 }
 
-export async function saveRecipeCooked(data: RegisterRecipeAsCooked) {
+export async function saveRecipeCooked(data: FormData) {
   return apiClient.recipeService.saveRecipeCooked(data);
+}
+
+export async function softDeleteRecipe(recipeId: string) {
+  return apiClient.recipeService.softDeleteRecipe(recipeId);
 }

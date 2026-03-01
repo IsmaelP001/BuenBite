@@ -25,8 +25,6 @@ import {
   RecommendedRecipe,
   RegisterRecipeAsCooked,
   RemoveMealPlanEntry,
-  ScheduleRecipeMealPlan,
-  SearchRecipe,
   FilterMealplanMissingIngredients,
   CreateMealPlanFromSuggestion,
   ScheduleRecipeMealPlanDto,

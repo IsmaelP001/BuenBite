@@ -49,7 +49,6 @@ export default function SaveRecipeBtn({
     }
   };
 
-  console.log("isSaved", isSaved, "isLoading", isLoading);
 
   return (
     <Button
