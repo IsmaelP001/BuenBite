@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const SSR_CRITICAL_ROUTES = ['/dashboard', '/settings']
+const SSR_CRITICAL_ROUTES = [ '/settings']
 
 const PROTECTED_ROUTES = ['/settings', '/recipes/create', '/pantry/create', '/user/favorites','/user/recipes', '/tracking','/purchases']
 
@@ -54,7 +54,7 @@ export async function updateSession(request: NextRequest) {
     if (user) {
       const url = request.nextUrl.clone()
       const redirectTo = request.nextUrl.searchParams.get('redirectTo')
-      url.pathname = redirectTo || '/dashboard'
+      url.pathname = redirectTo || '/'
       url.searchParams.delete('redirectTo')
       return NextResponse.redirect(url)
     }

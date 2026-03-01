@@ -1,4 +1,3 @@
-// lib/api/apiClient.ts
 import { HttpClient } from "@/lib/http/httpClient";
 import { IngredientsService } from "./api/ingredientsService";
 import { PantryService } from "./api/pantryService";
@@ -7,7 +6,8 @@ import { RecipeService } from "./api/recepiesService";
 import { UserService } from "./api/userService";
 import { MealplanService } from "./api/mealplanService";
 import { SocialService } from "./api/socialService";
-import { createClient } from "@/lib/supabase/client";
+import { GamificationService } from "./api/gamificationService";
+import { createSupabaseClient } from "@/lib/supabase/client";
 
 export class ApiClient {
   public ingredientService: IngredientsService;
@@ -17,12 +17,10 @@ export class ApiClient {
   public userService: UserService;
   public mealplanService: MealplanService;
   public socialService: SocialService;
+  public gamificationService: GamificationService;
 
   constructor() {
-    // HttpClient ahora obtiene el token automáticamente
     const httpClient = new HttpClient();
-    
-    // userId también puede ser lazy
     this.ingredientService = new IngredientsService(httpClient);
     this.pantryService = new PantryService(httpClient);
     this.purchaseService = new PurchaseService(httpClient);
@@ -30,13 +28,16 @@ export class ApiClient {
     this.userService = new UserService(httpClient);
     this.mealplanService = new MealplanService(httpClient);
     this.socialService = new SocialService(httpClient);
+    this.gamificationService = new GamificationService(httpClient);
   }
 
   async initialize() {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const supabase = createSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const userId = session?.user.id ?? "";
-    
+
     return userId;
   }
 }
