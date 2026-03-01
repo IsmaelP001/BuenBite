@@ -59,6 +59,10 @@ export class PantryService {
     });
   }
 
+  async softDeletePantryItem(itemId: string): Promise<ApiResponse<PantryItem>> {
+    return this.httpClient.put<PantryItem>(`pantry/${itemId}/soft-delete`);
+  }
+
   async registerPendingPurchase(
     data: PendingPurchase
   ): Promise<ApiResponse<PantryItem>> {
@@ -85,8 +89,14 @@ export class PantryService {
   }
 
   async getPantryTransactions(
-    pantryId: string
+    pantryId: string,
+    pagination?: { page?: number; limit?: number },
   ): Promise<ApiResponse<PantryTransaction[]>> {
-    return this.httpClient.get(`pantry/${pantryId}/transactions`);
+    return this.httpClient.get(`pantry/${pantryId}/transactions`, {
+      queryParams: {
+        page: pagination?.page ?? 1,
+        limit: pagination?.limit ?? 15,
+      },
+    });
   }
 }

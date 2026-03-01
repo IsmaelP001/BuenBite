@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import MealPlanCard from "@/components/MealplanCard";
 import {
   Flame,
   Droplets,
@@ -30,8 +31,21 @@ const NutritionResults = async ({
 }) => {
   const { id } = await params;
   const apiClient = new ApiClient();
-  const { data: metrics } =
-    await apiClient.userService.getUserNutritionalMetricsById(id);
+  const [metricsResponse, suggestedMealPlansResponse] = await Promise.all([
+    apiClient.userService.getUserNutritionalMetricsById(id),
+    apiClient.mealplanService
+      .getAllSuggestedMealPlansByUserMetrics()
+      .catch(() => ({ data: [] })),
+  ]);
+  const metrics = metricsResponse.data;
+  const suggestedMealPlansRaw = suggestedMealPlansResponse.data;
+  const suggestedMealPlans = Array.isArray(suggestedMealPlansRaw)
+    ? suggestedMealPlansRaw
+    : Array.isArray(suggestedMealPlansRaw?.items)
+    ? suggestedMealPlansRaw.items
+    : Array.isArray(suggestedMealPlansRaw?.data)
+    ? suggestedMealPlansRaw.data
+    : [];
 
   const getGoalIcon = (goal: string) => {
     switch (goal) {
@@ -49,7 +63,9 @@ const NutritionResults = async ({
     const labels: Record<string, string> = {
       lose_weight: "Perder peso",
       maintain: "Mantener peso",
+      maintain_weight: "Mantener peso",
       gain_muscle: "Ganar músculo",
+      build_muscle: "Ganar músculo",
       gain_weight: "Ganar peso",
     };
     return labels[goal] || goal;
@@ -63,6 +79,9 @@ const NutritionResults = async ({
       keto: "Keto",
       paleo: "Paleo",
       mediterranean: "Mediterránea",
+      low_carb: "Baja en carbohidratos",
+      "high-protein": "Alta en proteína",
+      high_protein: "Alta en proteína",
     };
     return labels[diet] || diet;
   };
@@ -71,307 +90,222 @@ const NutritionResults = async ({
     const labels: Record<string, string> = {
       sedentary: "Sedentario",
       light: "Ligero",
+      lightly_active: "Ligero",
       moderate: "Moderado",
+      moderately_active: "Moderado",
       active: "Activo",
       very_active: "Muy Activo",
+      extremely_active: "Extremadamente activo",
     };
     return labels[activity] || activity;
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
-      {/* Hero Section */}
-      <div className="bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-16">
-        <div className=" flex flex-row max-w-7xl mx-auto px-8">
-          <div className="flex flex-row">
-            <div className="flex items-center justify-center mb-6">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
-                <CheckCircle2 className="h-10 w-10" />
-              </div>
-            </div>
-            <h1 className="text-5xl font-bold text-center mb-4">
-              Tu Plan Nutricional Personalizado
-            </h1>
-          </div>
-          <p className="text-xl mt-5 text-indigo-100 max-w-2xl mx-auto">
-            Hemos calculado un plan único basado en tus objetivos y metabolismo
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-8 -mt-8 pb-12">
-        {/* Goal Card - Floating */}
-        <Card className="mb-8 shadow-sm border-0 overflow-hidden">
-          <div className="p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="p-4 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 shadow-lg">
-                  {getGoalIcon(metrics.primaryGoal)}
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10 space-y-6">
+        <Card className="border shadow-none bg-linear-to-b from-primary/10 via-card to-card">
+          <CardContent className="p-6 md:p-8">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <CheckCircle2 className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium mb-1">
-                    Tu Objetivo Principal
+                <div className="space-y-1">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Resultado listo
                   </p>
-                  <p className="font-bold text-3xl text-foreground">
-                    {getGoalLabel(metrics.primaryGoal)}
+                  <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
+                    Tu plan nutricional personalizado
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    Basado en tus objetivos, datos corporales y nivel de actividad.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant={metrics.isHealthyGoal ? "default" : "destructive"}
-                  className="px-4 py-2 text-sm"
+                  className="h-8 px-3"
                 >
-                  {metrics.isHealthyGoal ? "✓ Meta saludable" : "Revisar meta"}
+                  {metrics.isHealthyGoal ? "Meta saludable" : "Revisar meta"}
                 </Badge>
-                <Badge variant="secondary" className="px-4 py-2 text-sm">
+                <Badge variant="secondary" className="h-8 px-3">
                   {getDietLabel(metrics.dietType)}
                 </Badge>
               </div>
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
-          {/* Left Column - Daily Targets */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Daily Nutrition Cards */}
+        <Card className="border shadow-none">
+          <CardContent className="p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  {getGoalIcon(metrics.primaryGoal)}
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                    Objetivo principal
+                  </p>
+                  <p className="text-xl font-semibold">
+                    {getGoalLabel(metrics.primaryGoal)}
+                  </p>
+                </div>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Actividad:{" "}
+                <span className="font-medium text-foreground">
+                  {getActivityLabel(metrics.activityLevel)}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
             <div>
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Target className="h-6 w-6 text-indigo-600" />
-                Objetivos Diarios
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+                <Target className="h-5 w-5 text-primary" />
+                Objetivos diarios
               </h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-linear-to-br from-orange-50 to-red-50">
-                  <CardContent className="pt-8 pb-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="p-3 rounded-xl bg-linear-to-br from-orange-500 to-red-500 shadow-md">
-                        <Flame className="h-8 w-8 text-white" />
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        Principal
-                      </Badge>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Card className="border shadow-none">
+                  <CardContent className="p-5">
+                    <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
+                      <Flame className="h-5 w-5" />
                     </div>
-                    <p className="text-4xl font-bold text-foreground mb-1">
-                      {metrics.dailyCaloriesTarget}
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      Calorías por día
-                    </p>
+                    <p className="text-2xl font-semibold">{metrics.dailyCaloriesTarget}</p>
+                    <p className="text-sm text-muted-foreground">Calorías</p>
                   </CardContent>
                 </Card>
-
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-linear-to-br from-red-50 to-pink-50">
-                  <CardContent className="pt-8 pb-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="p-3 rounded-xl bg-linear-to-br from-red-500 to-pink-500 shadow-md">
-                        <Utensils className="h-8 w-8 text-white" />
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {metrics.proteinPercentage}%
-                      </Badge>
+                <Card className="border shadow-none">
+                  <CardContent className="p-5">
+                    <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
+                      <Utensils className="h-5 w-5" />
                     </div>
-                    <p className="text-4xl font-bold text-foreground mb-1">
-                      {metrics.dailyProteinTarget}g
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      Proteína diaria
-                    </p>
+                    <p className="text-2xl font-semibold">{metrics.dailyProteinTarget}g</p>
+                    <p className="text-sm text-muted-foreground">Proteína</p>
                   </CardContent>
                 </Card>
-
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-amber-50 to-yellow-50">
-                  <CardContent className="pt-8 pb-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 shadow-md">
-                        <Zap className="h-8 w-8 text-white" />
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {metrics.carbsPercentage}%
-                      </Badge>
+                <Card className="border shadow-none">
+                  <CardContent className="p-5">
+                    <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                      <Zap className="h-5 w-5" />
                     </div>
-                    <p className="text-4xl font-bold text-foreground mb-1">
-                      {metrics.dailyCarbsTarget}g
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      Carbohidratos
-                    </p>
+                    <p className="text-2xl font-semibold">{metrics.dailyCarbsTarget}g</p>
+                    <p className="text-sm text-muted-foreground">Carbohidratos</p>
                   </CardContent>
                 </Card>
-
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-50 to-cyan-50">
-                  <CardContent className="pt-8 pb-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md">
-                        <Droplets className="h-8 w-8 text-white" />
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {metrics.fatPercentage}%
-                      </Badge>
+                <Card className="border shadow-none">
+                  <CardContent className="p-5">
+                    <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-sky-600">
+                      <Droplets className="h-5 w-5" />
                     </div>
-                    <p className="text-4xl font-bold text-foreground mb-1">
-                      {metrics.dailyFatTarget}g
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      Grasas saludables
-                    </p>
+                    <p className="text-2xl font-semibold">{metrics.dailyFatTarget}g</p>
+                    <p className="text-sm text-muted-foreground">Grasas</p>
                   </CardContent>
                 </Card>
               </div>
             </div>
 
-            {/* Macros Distribution */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-indigo-600" />
-                  Distribución de Macronutrientes
+            <Card className="border shadow-none">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Distribución de macronutrientes
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-5">
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                      Proteínas
-                    </span>
-                    <span className="text-sm font-bold">
-                      {metrics.proteinPercentage}% •{" "}
-                      {metrics.dailyProteinTarget}g
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span>Proteínas</span>
+                    <span className="font-medium">
+                      {metrics.proteinPercentage}% • {metrics.dailyProteinTarget}g
                     </span>
                   </div>
-                  <Progress value={metrics.proteinPercentage} className="h-3" />
+                  <Progress value={metrics.proteinPercentage} className="h-2.5" />
                 </div>
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                      Carbohidratos
-                    </span>
-                    <span className="text-sm font-bold">
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span>Carbohidratos</span>
+                    <span className="font-medium">
                       {metrics.carbsPercentage}% • {metrics.dailyCarbsTarget}g
                     </span>
                   </div>
-                  <Progress value={metrics.carbsPercentage} className="h-3" />
+                  <Progress value={metrics.carbsPercentage} className="h-2.5" />
                 </div>
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      Grasas
-                    </span>
-                    <span className="text-sm font-bold">
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span>Grasas</span>
+                    <span className="font-medium">
                       {metrics.fatPercentage}% • {metrics.dailyFatTarget}g
                     </span>
                   </div>
-                  <Progress value={metrics.fatPercentage} className="h-3" />
+                  <Progress value={metrics.fatPercentage} className="h-2.5" />
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Column - Metrics & Timeline */}
-          <div className="space-y-8">
-            {/* Body Metrics */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Scale className="h-5 w-5 text-indigo-600" />
-                  Métricas Corporales
+          <div className="space-y-6">
+            <Card className="border shadow-none">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Scale className="h-5 w-5 text-primary" />
+                  Métricas corporales
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">
-                    Peso actual
-                  </span>
-                  <span className="font-semibold text-lg">
-                    {metrics.currentWeight} {metrics.weightUnit}
-                  </span>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground">Peso actual</span>
+                  <span className="font-medium">{metrics.currentWeight} {metrics.weightUnit}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">Altura</span>
-                  <span className="font-semibold text-lg">
-                    {metrics.height} {metrics.heightUnit}
-                  </span>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground">Altura</span>
+                  <span className="font-medium">{metrics.height} {metrics.heightUnit}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">
-                    IMC actual
-                  </span>
-                  <div className="text-right">
-                    <span className="font-semibold text-lg block">
-                      {metrics.currentBMI.toFixed(1)}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {metrics.bmiCategory}
-                    </span>
-                  </div>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground">IMC</span>
+                  <span className="font-medium">{metrics.currentBMI.toFixed(1)} ({metrics.bmiCategory})</span>
                 </div>
                 {metrics.suggestedGoalWeight && (
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <span className="text-sm text-muted-foreground">
-                      Peso objetivo
-                    </span>
-                    <span className="font-semibold text-lg text-indigo-600">
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-muted-foreground">Peso objetivo</span>
+                    <span className="font-medium text-primary">
                       {metrics.suggestedGoalWeight} {metrics.weightUnit}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-muted-foreground">Edad</span>
-                  <span className="font-semibold text-lg">
-                    {metrics.age} años
-                  </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Edad</span>
+                  <span className="font-medium">{metrics.age} años</span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Metabolism */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-indigo-600" />
-                  Metabolismo
+            <Card className="border shadow-none">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  Metabolismo y progreso
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">
-                    TMB (Basal)
-                  </span>
-                  <span className="font-semibold text-lg">
-                    {metrics.bmr} kcal
-                  </span>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground">TMB</span>
+                  <span className="font-medium">{metrics.bmr} kcal</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">
-                    TDEE (Total)
-                  </span>
-                  <span className="font-semibold text-lg">
-                    {metrics.tdee} kcal
-                  </span>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground">TDEE</span>
+                  <span className="font-medium">{metrics.tdee} kcal</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">
-                    Actividad
-                  </span>
-                  <span className="font-semibold text-sm">
-                    {getActivityLabel(metrics.activityLevel)}
-                  </span>
-                </div>
-                {metrics.calorieAdjustment && (
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <span className="text-sm text-muted-foreground">
-                      Ajuste diario
-                    </span>
+                {metrics.calorieAdjustment !== null && metrics.calorieAdjustment !== undefined && (
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-muted-foreground">Ajuste diario</span>
                     <span
-                      className={`font-bold text-lg ${
-                        metrics.calorieAdjustment < 0
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }`}
+                      className={metrics.calorieAdjustment < 0 ? "font-medium text-red-600" : "font-medium text-green-600"}
                     >
                       {metrics.calorieAdjustment > 0 ? "+" : ""}
                       {metrics.calorieAdjustment} kcal
@@ -379,81 +313,42 @@ const NutritionResults = async ({
                   </div>
                 )}
                 {metrics.dailyWaterTarget && (
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-sm text-muted-foreground">
-                      Agua diaria
-                    </span>
-                    <span className="font-semibold text-lg text-blue-600">
-                      {metrics.dailyWaterTarget} L
-                    </span>
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-muted-foreground">Agua diaria</span>
+                    <span className="font-medium">{metrics.dailyWaterTarget} L</span>
+                  </div>
+                )}
+                {metrics.estimatedWeeks && (
+                  <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 space-y-1">
+                    <p className="text-sm">
+                      <span className="text-muted-foreground">Objetivo estimado:</span>{" "}
+                      <span className="font-medium">{metrics.totalWeightToChange} kg</span>
+                    </p>
+                    <p className="text-sm">
+                      <span className="text-muted-foreground">Tiempo:</span>{" "}
+                      <span className="font-medium">{metrics.estimatedWeeks} semanas</span>
+                    </p>
+                    {metrics.estimatedCompletionDate && (
+                      <p className="text-sm">
+                        <span className="text-muted-foreground">Fecha:</span>{" "}
+                        <span className="font-medium">{metrics.estimatedCompletionDate}</span>
+                      </p>
+                    )}
                   </div>
                 )}
               </CardContent>
             </Card>
-
-            {/* Timeline */}
-            {metrics.estimatedWeeks && (
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-purple-50">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-indigo-600" />
-                    Progreso Estimado
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-center p-4 bg-white rounded-xl">
-                      <p className="text-4xl font-bold text-indigo-600 mb-1">
-                        {metrics.totalWeightToChange}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        kg a cambiar
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 bg-white rounded-lg">
-                        <p className="text-2xl font-bold text-foreground">
-                          {metrics.estimatedWeeks}
-                        </p>
-                        <p className="text-xs text-muted-foreground">semanas</p>
-                      </div>
-                      <div className="text-center p-3 bg-white rounded-lg">
-                        <p className="text-2xl font-bold text-foreground">
-                          {metrics.weeklyWeightChange}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          kg/semana
-                        </p>
-                      </div>
-                    </div>
-                    {metrics.estimatedCompletionDate && (
-                      <div className="text-center pt-2">
-                        <p className="text-xs text-muted-foreground mb-1">
-                          Fecha estimada
-                        </p>
-                        <p className="font-semibold text-indigo-600">
-                          {metrics.estimatedCompletionDate}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
 
-        {/* Warnings */}
-        {metrics.warnings.length > 0 && (
-          <Card className="mb-12 border-yellow-500/50 shadow-lg">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <AlertTriangle className="h-6 w-6 text-yellow-500 flex-shrink-0 mt-1" />
-                <div>
-                  <p className="font-semibold text-lg text-yellow-700 mb-2">
-                    Advertencias
-                  </p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
+        {metrics.warnings?.length > 0 && (
+          <Card className="border-yellow-300/70 bg-yellow-50/60 shadow-none">
+            <CardContent className="p-5">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-yellow-700 flex-shrink-0 mt-0.5" />
+                <div className="space-y-2">
+                  <p className="font-medium text-yellow-900">Advertencias</p>
+                  <ul className="space-y-1 text-sm text-yellow-900/80">
                     {metrics.warnings.map((warning, index) => (
                       <li key={index}>{warning}</li>
                     ))}
@@ -464,25 +359,39 @@ const NutritionResults = async ({
           </Card>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-4">
-          <Link href="/calories-tracking/plans/suggested">
-            <Button
-              className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all"
-              size="lg"
-            >
-              <Search className="h-5 w-5 mr-2" />
-              Buscar Planes Sugeridos
+        <Card className="border shadow-none">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Search className="h-5 w-5 text-primary" />
+              Planes recomendados para ti
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {suggestedMealPlans.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {suggestedMealPlans.slice(0, 6).map((plan) => (
+                  <MealPlanCard key={plan.id} {...plan} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No hay planes sugeridos por ahora. Puedes explorar todo el catálogo.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
+          <Link href="/tracking">
+            <Button variant="outline" className="w-full sm:w-auto">
+              <Home className="h-4 w-4 mr-2" />
+              Ir a tracking
             </Button>
           </Link>
-          <Link href="/calories-tracking">
-            <Button
-              variant="outline"
-              className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all"
-              size="lg"
-            >
-              <Home className="h-5 w-5 mr-2" />
-              Volver al Inicio
+          <Link href="/meal-plans">
+            <Button className="w-full sm:w-auto">
+              <Search className="h-4 w-4 mr-2" />
+              Ver todos los planes
             </Button>
           </Link>
         </div>
