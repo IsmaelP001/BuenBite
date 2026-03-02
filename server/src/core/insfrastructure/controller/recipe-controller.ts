@@ -264,7 +264,6 @@ export class RecipeController {
       userId,
       recipeId,
     );
-
     return recipes;
   }
 
@@ -334,7 +333,6 @@ export class RecipeController {
     @Req() req: any,
     @Body() body: RecipeCookWithPantryItemsDto,
   ) {
-    console.log('body regiterRecipeAsCooked', body);
     const userId = req.userId;
     const ingredients = JSON.parse(body.ingredients as any);
     await this.recipesFacade.registerRecipeCooked({
