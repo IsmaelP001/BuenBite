@@ -6,6 +6,11 @@
       "use": "@vercel/node"
     }
   ],
+  "functions": {
+    "api/index.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "routes": [
     {
       "src": "/(.*)",
