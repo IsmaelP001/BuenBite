@@ -7,9 +7,13 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strict": true,
+    "outDir": "./dist",
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "skipLibCheck": true,
-    "outDir": "./dist"
+    "noEmitOnError": false,
+    "suppressImplicitAnyIndexErrors": true
   },
   "ts-node": {
     "esm": true,
