@@ -76,7 +76,7 @@ export function NavbarUserBadge() {
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-11 rounded-full p-1 pr-3 gap-2"
+          className="relative min-h-11 rounded-full py-1 pl-1 pr-3 gap-2 items-center"
           aria-label="Abrir menú de usuario"
         >
           <XpBadge

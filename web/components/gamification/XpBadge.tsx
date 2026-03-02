@@ -24,9 +24,9 @@ interface XpBadgeProps {
 }
 
 const SIZES = {
-  sm: { container: 36, radius: 14, stroke: 3, icon: 14, fontSize: "text-[8px]" },
-  md: { container: 44, radius: 17, stroke: 3.5, icon: 18, fontSize: "text-[10px]" },
-  lg: { container: 56, radius: 22, stroke: 4, icon: 22, fontSize: "text-xs" },
+  sm: { container: 36, stroke: 3, icon: 14, fontSize: "text-[8px]" },
+  md: { container: 44, stroke: 3.5, icon: 18, fontSize: "text-[10px]" },
+  lg: { container: 56, stroke: 4, icon: 22, fontSize: "text-xs" },
 };
 
 export function XpBadge({
@@ -41,8 +41,12 @@ export function XpBadge({
   showLevelChip = true,
   className,
 }: XpBadgeProps) {
-  const { container, radius, stroke, icon, fontSize } = SIZES[size];
+  const { container, stroke, icon, fontSize } = SIZES[size];
+  const ringInset = 1.5;
+  const avatarGap = 2;
+  const radius = container / 2 - stroke / 2 - ringInset;
   const circumference = 2 * Math.PI * radius;
+  const avatarDiameter = Math.max(0, 2 * (radius - stroke / 2 - avatarGap));
   const { percent } = getXpProgress(totalXp);
   const levelConfig = getGlobalLevel(totalXp);
   const resolvedLevel = globalLevel ?? levelConfig.level;
@@ -102,7 +106,8 @@ export function XpBadge({
       <svg
         width={container}
         height={container}
-        className="absolute inset-0 -rotate-90"
+        className="absolute inset-0 z-0 -rotate-90"
+        style={{ transformOrigin: "50% 50%" }}
       >
         <circle
           cx={center}
@@ -130,12 +135,15 @@ export function XpBadge({
 
       <div
         className={cn(
-          "relative rounded-full flex items-center justify-center overflow-hidden",
+          "absolute z-10 rounded-full flex items-center justify-center overflow-hidden",
           colors.bg
         )}
         style={{
-          width: container - stroke * 2 - 4,
-          height: container - stroke * 2 - 4,
+          width: avatarDiameter,
+          height: avatarDiameter,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
         }}
       >
         {avatarUrl ? (
