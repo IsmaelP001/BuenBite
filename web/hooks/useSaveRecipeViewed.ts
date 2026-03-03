@@ -1,5 +1,5 @@
 import { useHttpApiClient } from "@/services/apiClient";
-import { useMutation } from "@tanstack/react-query";
+import { useAppMutation } from "./useAppMutation";
 
 const STORAGE_KEY = "@viewed_recipes";
 
@@ -8,8 +8,8 @@ const getCurrentDate = () => new Date().toISOString().split("T")[0];
 export default function useSaveRecipeViewed() {
   const apiClient = useHttpApiClient();
 
-  const mutation = useMutation({
-    mutationFn: async (recipeId: string) => {
+  return useAppMutation(
+    async (recipeId: string) => {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         const data = stored ? JSON.parse(stored) : { date: "", recipeIds: [] };
@@ -35,7 +35,16 @@ export default function useSaveRecipeViewed() {
         throw err;
       }
     },
-  });
-
-  return mutation;
+    {
+      invalidateQueries: ["recent_recepies_viewed"],
+      toastConfig: {
+        error: "No se pudo guardar la receta vista",
+      },
+      toastVisibility: {
+        showLoading: false,
+        showSuccess: false,
+        showError: true,
+      },
+    },
+  );
 }

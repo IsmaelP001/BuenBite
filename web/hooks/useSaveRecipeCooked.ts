@@ -30,7 +30,15 @@ export default function useSaveRecipeCooked() {
     (data: RegisterRecipeAsCooked) =>
       saveRecipeCooked(buildFormData(data)),
     {
-      invalidateQueries: ["pantry_items", "user_nutritional_history","pantry_transactions"],
+      invalidateQueries: [
+        "pantry_items",
+        "pantry_transactions",
+        "user_nutritional_history",
+        "user_weekly_nutritional_resume",
+        "user_mealplan_entries",
+        "todays_user_mealplan_entries",
+        "recipe_cooked",
+      ],
       toastVisibility: {
         showError: true,
         showSuccess: true,
@@ -39,7 +47,7 @@ export default function useSaveRecipeCooked() {
       toastConfig: {
         success:
           "Receta guardada. Ingredientes y datos nutricionales actualizados.",
-        loading: "Registrado receta",
+        loading: "Registrando receta...",
         error: "Error al registrar receta",
       },
       onSuccess: () => {

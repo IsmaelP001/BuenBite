@@ -1,19 +1,26 @@
 import { useHttpApiClient } from "@/services/apiClient";
 import { IaScanPantryItems } from "@/types/models/pantry";
-import { useMutation } from "@tanstack/react-query";
+import { useAppMutation } from "./useAppMutation";
 
 export default function useSaveScanIaPantryIngredients() {
   const apiClient = useHttpApiClient();
 
-  return useMutation({
-    mutationFn: async (data: IaScanPantryItems[]) => {
-      return await apiClient.pantryService.saveIaScanPantryItems(data);
+  return useAppMutation(
+    async (data: IaScanPantryItems[]) => {
+      return apiClient.pantryService.saveIaScanPantryItems(data);
     },
-    onSuccess: () => {
-      // router.push("/(tabs)/pantry");
+    {
+      invalidateQueries: ["pantry_items", "pantry_transactions"],
+      toastConfig: {
+        loading: "Guardando ingredientes detectados...",
+        success: "Ingredientes guardados en la despensa",
+        error: "No se pudieron guardar los ingredientes escaneados",
+      },
+      toastVisibility: {
+        showLoading: true,
+        showSuccess: true,
+        showError: true,
+      },
     },
-    onError: (error: any) => {
-    
-    },
-  });
+  );
 }

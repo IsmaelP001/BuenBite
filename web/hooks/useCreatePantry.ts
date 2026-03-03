@@ -11,7 +11,7 @@ export default function useCreatePantry() {
       loading: "Añadiendo ingrediente",
     },
     toastVisibility: {
-      showLoading: false,
+      showLoading: true,
       showSuccess: true,
       showError: true,
     },
