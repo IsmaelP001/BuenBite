@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -130,11 +130,18 @@ const PurchaseConfirmationModal = <T extends BaseIngredientForAnalysis>({
   const { mutate: createPurchaseMutation, isPending: isCreatingPurchase } =
     useCreatePurchase();
 
-  useEffect(() => {
+  const resetDialogState = () => {
     setCartItems(convertToCartItems(initialItems));
     setSearchQuery("");
     setRecentlyAdded(null);
-  }, [open, initialItems]);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      resetDialogState();
+    }
+    onOpenChange?.(nextOpen);
+  };
 
   const { ingredients: searchResults, isPending: isPendingIngredients } =
     useGetIngredients({
@@ -226,7 +233,7 @@ const PurchaseConfirmationModal = <T extends BaseIngredientForAnalysis>({
   const totalItems = cartItems.length;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant='outline' className="w-full gap-2">
           <ShoppingCart className="h-4 w-4" />
@@ -485,7 +492,7 @@ const PurchaseConfirmationModal = <T extends BaseIngredientForAnalysis>({
         <DialogFooter className="p-2.5 sm:p-4 border-t bg-muted/30 flex-row gap-2">
           <Button
             variant="outline"
-            onClick={() => setCartItems(convertToCartItems(initialItems))}
+            onClick={resetDialogState}
             className="flex-1 sm:flex-none h-9 sm:h-11 text-xs sm:text-sm"
           >
             <X className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
