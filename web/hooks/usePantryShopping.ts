@@ -1,5 +1,5 @@
 import { PantryItem, PendingPurchase } from "@/types/models/pantry";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOptimisticMutation } from "./useOptimisticMutation";
 import { registerPendingPurchase } from "@/actions/pantry";
 
@@ -44,13 +44,16 @@ export const usePantryShopping = (item: PantryItem) => {
     setShowAddToCart(false);
   };
 
-  useEffect(() => {
-    setQuantityToAdd(item.pendingPurchaseQuantity || 1);
-  }, [showAddToCart,item]);
+  const setShowAddToCartWithSync = (isOpen: boolean) => {
+    if (isOpen) {
+      setQuantityToAdd(item.pendingPurchaseQuantity || 1);
+    }
+    setShowAddToCart(isOpen);
+  };
 
   return {
     showAddToCart,
-    setShowAddToCart,
+    setShowAddToCart: setShowAddToCartWithSync,
     quantityToAdd,
     handleQuantityChange,
     addToShoppingList,

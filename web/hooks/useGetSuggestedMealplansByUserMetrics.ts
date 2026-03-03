@@ -9,7 +9,7 @@ export default function useGetSuggestedMealplanByUserMetrics() {
       return await getAllSuggestedMealPlansByUserMetrics()
     },
     select(data){
-        return data?.data!
+        return data?.data ?? []
     }
   });
 }

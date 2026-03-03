@@ -204,15 +204,20 @@ export default function useRecipeServings({
 
   useEffect(() => {
     if (originalServings > 0 && servings !== originalServings) {
-      setServings(originalServings);
+      const timeoutId = window.setTimeout(() => {
+        setServings(originalServings);
+      }, 0);
+      return () => window.clearTimeout(timeoutId);
     }
   }, [originalServings]);
 
   useEffect(() => {
     if (!ingredientsData || ingredientsData.length === 0) {
       lastProcessedIds.current = "";
-      setIngredients([]);
-      return;
+      const timeoutId = window.setTimeout(() => {
+        setIngredients([]);
+      }, 0);
+      return () => window.clearTimeout(timeoutId);
     }
 
     const currentIds = ingredientsData
@@ -227,8 +232,11 @@ export default function useRecipeServings({
       updateIngredientCalculations(item, item.measurementValue ?? 0)
     );
 
-    setIngredients(initialIngredients);
-    setServings(originalServings); 
+    const timeoutId = window.setTimeout(() => {
+      setIngredients(initialIngredients);
+      setServings(originalServings);
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [ingredientsData, originalServings]);
 
   const resetAllIngredients = useCallback(() => {
