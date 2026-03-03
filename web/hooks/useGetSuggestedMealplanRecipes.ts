@@ -22,7 +22,7 @@ export default function useGetSuggestedMealplanRecipes({id}:{id:string}) {
       );
     },
     select(data){
-        return data?.data!
+        return data?.data ?? []
     }
   });
 

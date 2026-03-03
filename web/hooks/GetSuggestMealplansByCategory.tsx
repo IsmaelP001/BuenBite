@@ -10,7 +10,7 @@ export default function useGetSuggestedMealplansByCategory() {
       return await getSuggestedMealPlansByCategory({limit:3})
     },
     select(data){
-        return data?.data!
+        return data?.data ?? []
     }
   });
 }

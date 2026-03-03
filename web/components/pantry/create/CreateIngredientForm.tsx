@@ -61,7 +61,9 @@ export const CreateIngredientDialog: React.FC<CreateIngredientDialogProps> = ({
       const { data: ingredient } = await createIngredientMutation(newIng);
       onSubmit(ingredient);
       onClose()
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error creating ingredient:", error);
+    }
   };
 
   return (

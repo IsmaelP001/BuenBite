@@ -132,7 +132,9 @@ export default function ScheduleMealPlan(): JSX.Element {
         suggestedMealplanId: id as string,
       });
       setIsModalOpen(false);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error scheduling meal plan:", error);
+    }
   };
 
   return (
