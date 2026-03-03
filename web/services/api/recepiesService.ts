@@ -155,7 +155,7 @@ export class RecipeService {
   ): Promise<ApiResponse<RecipeTip[]>> {
     return this.httpClient.get(`recipes/tips/${filter.recipeId}`, {
       queryParams: {
-        limit: filter?.limit! ?? "",
+        limit: filter?.limit ?? "",
         page: filter?.page ?? 1,
       },
     });
@@ -167,7 +167,7 @@ export class RecipeService {
     console.log("getRecipeTips", filter);
     return this.httpClient.get(`recipes/cooked`, {
       queryParams: {
-        limit: filter?.limit! ?? "",
+        limit: filter?.limit ?? "",
         page: filter?.page ?? 1,
         recipeId: filter.recipeId ?? "",
       },

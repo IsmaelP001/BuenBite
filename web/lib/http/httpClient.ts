@@ -1,11 +1,9 @@
 import { ApiResponse } from "@/types";
 import { getSession } from "@/actions/auth";
+import { env } from "@/lib/config/env";
 
-export const API_SERVER_URL = "http://192.168.1.14:3003/api";
-// export const API_SERVER_URL = process.env.API_URL!;
-
-// export const API_SERVER_URL = "http://172.20.10.6:3003/api";
-const AUTH_API_KEY = process.env.API_KEY;
+const API_SERVER_URL = env.apiUrl.replace(/\/$/, "");
+const AUTH_API_KEY = process.env.API_KEY?.trim();
 
 interface RequestOptions {
   queryParams?: Record<string, string | number>;
@@ -77,6 +75,11 @@ export class HttpClient {
     endpoint: string,
     queryParams?: Record<string, string | number>,
   ): string {
+    if (!API_SERVER_URL) {
+      throw new Error(
+        "Missing API URL. Define NEXT_PUBLIC_API_URL (or API_URL) in environment variables.",
+      );
+    }
     const url = `${API_SERVER_URL}/${endpoint}`;
 
     if (queryParams && Object.keys(queryParams).length > 0) {
@@ -119,7 +122,7 @@ export class HttpClient {
       const response = await fetch(url, options);
 
       const contentType = response.headers.get("content-type");
-      let body: any = null;
+      let body: unknown = null;
 
       if (contentType?.includes("application/json")) {
         body = await response.json();
@@ -160,7 +163,7 @@ export class HttpClient {
     return this.executeRequest<T>(url, {
       method: "POST",
       headers,
-      body: (options?.isFormDataType ? body : jsonBody) as any,
+      body: (options?.isFormDataType ? body : jsonBody) as BodyInit | null,
     });
   }
 
