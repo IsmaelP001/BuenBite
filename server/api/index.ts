@@ -11,9 +11,13 @@ let initPromise: Promise<ExpressHandler> | null = null;
 
 async function createHandler(): Promise<ExpressHandler> {
   const server = express();
+  server.use(express.json());
+  server.use(express.urlencoded({ extended: true }));
+
   const app = await NestFactory.create(
     AppModule,
-    new ExpressAdapter(server)
+    new ExpressAdapter(server),
+    { bodyParser: false }
   );
 
   configureNestApp(app);
