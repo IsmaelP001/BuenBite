@@ -7,12 +7,17 @@ import { configureNestApp } from "../src/bootstrap";
 type ExpressHandler = (req: Request, res: Response) => void;
 
 let cachedHandler: ExpressHandler | null = null;
+let initPromise: Promise<ExpressHandler> | null = null;
 
 async function createHandler(): Promise<ExpressHandler> {
   const server = express();
+  server.use(express.json());
+  server.use(express.urlencoded({ extended: true }));
+
   const app = await NestFactory.create(
     AppModule,
-    new ExpressAdapter(server)
+    new ExpressAdapter(server),
+    { bodyParser: false }
   );
 
   configureNestApp(app);
@@ -22,9 +27,22 @@ async function createHandler(): Promise<ExpressHandler> {
 }
 
 export default async function handler(req: Request, res: Response) {
-  if (!cachedHandler) {
-    cachedHandler = await createHandler();
-  }
+  try {
+    if (!cachedHandler) {
+      if (!initPromise) {
+        initPromise = createHandler();
+      }
+      cachedHandler = await initPromise;
+    }
 
-  return cachedHandler(req, res);
+    return cachedHandler(req, res);
+  } catch (error) {
+    initPromise = null;
+    cachedHandler = null;
+    console.error("Serverless bootstrap failed:", error);
+    res.status(500).json({
+      message: "Server bootstrap failed",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
 }
