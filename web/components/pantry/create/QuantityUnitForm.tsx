@@ -23,6 +23,7 @@ interface QuantityUnitFormProps {
   onExpiryDateChange: (value: string) => void;
   onAddToPantry: () => void;
   isCreating?: boolean;
+  disabled?: boolean;
 }
 
 export const QuantityUnitForm: React.FC<QuantityUnitFormProps> = ({
@@ -35,7 +36,8 @@ export const QuantityUnitForm: React.FC<QuantityUnitFormProps> = ({
   onExpiryDateChange,
   onAddToPantry,
   mode,
-  isCreating
+  isCreating,
+  disabled = false,
 }) => {
   return (
     <Card className="border-primary/50 bg-primary/5">
@@ -90,7 +92,7 @@ export const QuantityUnitForm: React.FC<QuantityUnitFormProps> = ({
           onClick={onAddToPantry}
           className="w-full"
           size="lg"
-          disabled={!quantity}
+          disabled={!quantity || disabled}
         >
           <Plus className="w-4 h-4 mr-2" />
           {isCreating ? "Creando..." : mode === "pantry" ? "Añadir a Despensa" : "Añadir a Orden de Compra"}
