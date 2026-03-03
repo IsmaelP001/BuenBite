@@ -126,11 +126,13 @@ export default function useCookingSteps(): UseCookingStepsReturn {
     if (!currentRecipe || !data?.ingredients) return;
 
     const originalServings = currentRecipe.servings || 1;
-    setServings(originalServings);
-
     const initialIngredients = calculateInitialIngredients(data.ingredients);
+    const timeoutId = window.setTimeout(() => {
+      setServings(originalServings);
+      setIngredients(initialIngredients as IngredientsList[]);
+    }, 0);
 
-    setIngredients(initialIngredients as IngredientsList[]);
+    return () => window.clearTimeout(timeoutId);
   }, [currentRecipe, data]);
 
   // Recalcular valores cuando cambian las porciones

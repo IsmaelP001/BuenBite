@@ -52,7 +52,10 @@ export function useToggleLikeComment() {
       isLiked ? unlikeSocialComment(commentId) : likeSocialComment(commentId),
     {
       invalidateQueries: ["social"],
-      toastVisibility: { showSuccess: false, showLoading: false },
+      toastConfig: {
+        error: "No se pudo actualizar el like del comentario",
+      },
+      toastVisibility: { showSuccess: false, showLoading: false, showError: true },
     }
   );
 }

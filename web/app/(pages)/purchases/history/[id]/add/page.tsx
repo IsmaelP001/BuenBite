@@ -139,7 +139,6 @@ const PantryCreate = () => {
                 onUnitChange={setUnit}
                 onExpiryDateChange={setExpiryDate}
                 onAddToPantry={addIngredient}
-                disabled={!isFormValid}
               />
             )}
           </div>
@@ -169,6 +168,7 @@ const PantryCreate = () => {
         formData={newIngredient}
         onFormChange={updateNewIngredientForm}
         onSubmit={closeCreateForm}
+        onClose={closeCreateForm}
       />
     </div>
   );

@@ -144,7 +144,9 @@ const AddRecipeModal = ({ isOpen, onClose, mealType }: AddRecipeModalProps) => {
         mealType: mealType,
       });
       onClose();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error adding recipe to meal plan:", error);
+    }
   };
 
   const handleClose = () => {

@@ -4,6 +4,8 @@ import { getUserSavedRecipes } from "@/actions/recipes";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/queryClient";
 
+export const dynamic = "force-dynamic";
+
 const FavoritesPage = async () => {
   const queryClient = getQueryClient()
   const {data:favorites} = await queryClient.fetchQuery({

@@ -132,9 +132,16 @@ export default function RecipeVariantsManager({ recipe }: RecipeVariantsManagerP
       return createRecipe(formData);
     },
     {
+      invalidateQueries: ["recipe_variants", "recipes", "user_recipes"],
       toastConfig: {
+        loading: "Guardando variante...",
         success: "Variante creada",
         error: "No se pudo crear la variante",
+      },
+      toastVisibility: {
+        showLoading: true,
+        showSuccess: true,
+        showError: true,
       },
     },
   );
