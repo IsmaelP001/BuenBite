@@ -20,19 +20,22 @@ export default function useCreatePurchase() {
   return useAppMutation(
     async (data: PurchaseItemDto[]) => await createPurchase(data),
     {
-      invalidateQueries: ["user_purchases"],
+      invalidateQueries: ["user_purchases", "user_purchases_items", "pantry_items"],
       toastConfig: {
         success: "¡Orden creada con exito!",
         error: "Error al crear orden",
         loading: "Creando orden",
       },
       toastVisibility: {
-        showLoading: false,
+        showLoading: true,
         showSuccess: true,
         showError: true,
       },
-      onSuccess: (data:any) => {
-        router.push(`/purchases/history/${data.data?.purchase?.id}`);
+      onSuccess: (data) => {
+        const purchaseId = (data as { data?: { purchase?: { id?: string } } })?.data?.purchase?.id;
+        if (purchaseId) {
+          router.push(`/purchases/history/${purchaseId}`);
+        }
       },
     }
   );

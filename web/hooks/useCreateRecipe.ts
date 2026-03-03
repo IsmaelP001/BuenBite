@@ -2,7 +2,6 @@
 import { useRouter } from "next/navigation";
 import {
   CreateRecipeDto,
-  CreateRecipeIngredientDto,
   Instruction,
   RecipeItem,
 } from "@/types/models/recipes";
@@ -88,14 +87,19 @@ export default function useCreateRecipe({
   >({});
   const { mutateAsync: createRecipeMutation, isPending: isSubmitting } =
     useAppMutation(async (data: FormData) => await createRecipe(data), {
-      invalidateQueries: ["user_purchases"],
+      invalidateQueries: [
+        "user_recipes",
+        "recipes",
+        "recent_recepies_viewed",
+        "user_saved_recipes",
+      ],
       toastConfig: {
         success: "¡Receta creada con exito!",
         error: "Error al crear receta",
-        loading: "Creando orden",
+        loading: "Creando receta...",
       },
       toastVisibility: {
-        showLoading: false,
+        showLoading: true,
         showSuccess: true,
         showError: true,
       },
@@ -178,7 +182,9 @@ export default function useCreateRecipe({
     try {
       await handleCreateRecipe(fullRecipe);
       setValidationErrors({});
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error creating recipe:", error);
+    }
   };
 
   const handleCreateRecipe = async (data: CreateRecipeDto) => {

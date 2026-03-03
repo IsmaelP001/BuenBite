@@ -31,7 +31,10 @@ export function useMarkNotificationRead() {
     async (notificationId: string) => markNotificationRead(notificationId),
     {
       invalidateQueries: ["social"],
-      toastVisibility: { showSuccess: false, showLoading: false },
+      toastConfig: {
+        error: "No se pudo marcar la notificación como leída",
+      },
+      toastVisibility: { showSuccess: false, showLoading: false, showError: true },
     }
   );
 }

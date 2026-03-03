@@ -10,13 +10,19 @@ export default function useCreateMealPlanEntry() {
     ( data: ScheduleRecipeMealPlanDto) =>
       createMealPlanEntry(data),
     {
-      invalidateQueries: ["user_mealplan_entries"],
-        toastConfig: {
+      invalidateQueries: [
+        "user_mealplan_entries",
+        "active_user_mealplan",
+        "todays_user_mealplan_entries",
+      ],
+      toastConfig: {
+        loading: "Agendando receta...",
+        success: "Receta agendada correctamente",
         error: "Error al añadir receta",
       },
       toastVisibility: {
         showLoading: true,
-        showSuccess: false,
+        showSuccess: true,
         showError: true,
       },
     }
