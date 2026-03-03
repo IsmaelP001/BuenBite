@@ -1,5 +1,5 @@
 import { useHttpApiClient } from "@/services/apiClient";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppMutation } from "./useAppMutation";
 
 interface SaveRecipeTipInput {
   recipeId: string;
@@ -9,20 +9,23 @@ interface SaveRecipeTipInput {
 
 export function useSaveRecipeTip() {
   const apiClient = useHttpApiClient();
-  const queryClient = useQueryClient();
 
-  const { mutateAsync: saveRecipeTipMutation, isPending } = useMutation({
-    mutationFn: async (data: FormData) =>
-      await apiClient.recipeService.saveRecipeTip(data),
-    onSuccess(data, input) {
-      queryClient.invalidateQueries({
-        queryKey: ["recipe_most_recent_tip", input.get("recipeId")],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["recipe_tips", input.get("recipeId")],
-      });
+  const { mutateAsync: saveRecipeTipMutation, isPending } = useAppMutation(
+    async (data: FormData) => apiClient.recipeService.saveRecipeTip(data),
+    {
+      invalidateQueries: ["recipe_tips", "recipe_most_recent_tip"],
+      toastConfig: {
+        loading: "Guardando tip...",
+        success: "Tip guardado correctamente",
+        error: "No se pudo guardar el tip",
+      },
+      toastVisibility: {
+        showLoading: true,
+        showSuccess: true,
+        showError: true,
+      },
     },
-  });
+  );
 
   const handleSaveTip = async (data: SaveRecipeTipInput) => {
     const formData = new FormData();

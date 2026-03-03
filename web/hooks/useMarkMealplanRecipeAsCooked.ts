@@ -8,13 +8,22 @@ export default function useMarkMealplanRecipeAsCooked() {
     async (data: MarkMealPlanAsCooked) =>
       await markMealplanRecipeAsCooked(data),
     {
-      invalidateQueries: ["user_mealplan_entries"],
+      invalidateQueries: [
+        "user_mealplan_entries",
+        "todays_user_mealplan_entries",
+        "active_user_mealplan",
+        "pantry_items",
+        "pantry_transactions",
+        "user_nutritional_history",
+      ],
       toastConfig: {
+        loading: "Registrando receta cocinada...",
+        success: "Receta marcada como cocinada",
         error: "Error al marcar receta como cocinada",
       },
       toastVisibility: {
         showLoading: true,
-        showSuccess: false,
+        showSuccess: true,
         showError: true,
       },
     }

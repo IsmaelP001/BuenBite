@@ -1,5 +1,5 @@
 import { useHttpApiClient } from "@/services/apiClient";
-import { useMutation } from "@tanstack/react-query";
+import { useAppMutation } from "./useAppMutation";
 import { useEffect, useState } from "react";
 
 export default function useScanFoodIa() {
@@ -9,10 +9,21 @@ export default function useScanFoodIa() {
   const {
     mutate: generateRecipeIaMutation,
     ...rest
-  } = useMutation({
-    mutationFn: async (data: FormData) =>
-      await apiClient.recipeService.analizeRecipeImageIa(data),
-  });
+  } = useAppMutation(
+    async (data: FormData) => apiClient.recipeService.analizeRecipeImageIa(data),
+    {
+      toastConfig: {
+        loading: "Analizando imagen...",
+        success: "Análisis completado",
+        error: "No se pudo analizar la imagen",
+      },
+      toastVisibility: {
+        showLoading: true,
+        showSuccess: false,
+        showError: true,
+      },
+    },
+  );
 
   useEffect(() => {
     if (uploadedImage) {
@@ -38,5 +49,4 @@ export default function useScanFoodIa() {
     ...rest
   };
 }
-
 

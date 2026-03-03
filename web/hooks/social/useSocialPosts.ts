@@ -55,7 +55,10 @@ export function useToggleLikePost() {
       isLiked ? unlikeSocialPost(postId) : likeSocialPost(postId),
     {
       invalidateQueries: ["social"],
-      toastVisibility: { showSuccess: false, showLoading: false },
+      toastConfig: {
+        error: "No se pudo actualizar el like",
+      },
+      toastVisibility: { showSuccess: false, showLoading: false, showError: true },
     }
   );
 }

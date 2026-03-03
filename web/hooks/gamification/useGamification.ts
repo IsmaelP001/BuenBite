@@ -242,7 +242,10 @@ export function useDismissAlert() {
     async (alertId: string) => dismissGamificationAlert(alertId),
     {
       invalidateQueries: ["gamification", "alerts"],
-      toastVisibility: { showSuccess: false, showLoading: false },
+      toastConfig: {
+        error: "No se pudo descartar la alerta",
+      },
+      toastVisibility: { showSuccess: false, showLoading: false, showError: true },
     }
   );
 }
@@ -264,7 +267,10 @@ export function useEmitGamificationEvent() {
     async (data: EmitGamificationEventDto) => emitGamificationEvent(data),
     {
       invalidateQueries: ["gamification"],
-      toastVisibility: { showSuccess: false, showLoading: false },
+      toastConfig: {
+        error: "No se pudo registrar el evento de gamificación",
+      },
+      toastVisibility: { showSuccess: false, showLoading: false, showError: true },
     }
   );
 }
