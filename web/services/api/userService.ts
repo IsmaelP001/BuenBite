@@ -56,7 +56,7 @@ export class UserService {
   async getUserNutricionalHistory(startDate: Date) {
     return await this.httpClient.get<UserNutritionalHistory[]>(
       `user/nutritional-history`,
-      { queryParams: { startDate: startDate?.toISOString()! } }
+      { queryParams: { startDate: startDate?.toISOString() ?? "" } }
     );
   }
 
