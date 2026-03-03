@@ -6,9 +6,12 @@ import { lazy, Suspense } from "react";
 import { ErrorWrapper } from "@/components/ErrorWraper";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 import { getUserPantryItems } from "@/actions/pantry";
-const MealplanIngredientsContainer = dynamic(() => import("@/components/purchases/MealplanIngredientsContainer"), {
+
+export const dynamic = "force-dynamic";
+
+const MealplanIngredientsContainer = nextDynamic(() => import("@/components/purchases/MealplanIngredientsContainer"), {
 });
 const IngredientsContainer = lazy(()=>import("@/components/purchases/IngredientsContainer"))
 const Purchases = () => {

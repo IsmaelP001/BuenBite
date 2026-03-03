@@ -19,6 +19,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
+
 const ProfileTab = lazy(() => import("@/components/settings/ProfileTab"));
 const PreferencesTab = lazy(() => import("@/components/settings/PreferencesTab"));
 const NutritionTab = lazy(() => import("@/components/settings/NutritionTab"));
