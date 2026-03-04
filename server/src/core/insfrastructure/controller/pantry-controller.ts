@@ -48,9 +48,14 @@ export class PantryController {
   }
 
   @Get("user/:userId")
-  async getUserPantryItems(@Param("userId") userId: string) {
-    console.log("user pantry", userId);
-    const result = await this.pantryFacade.getUserPantry(userId);
+  async getUserPantryItems(@Req() req: any) {
+    const result = await this.pantryFacade.getUserPantry(req.userId);
+    return result;
+  }
+
+  @Get("user")
+  async getCurrentUserPantryItems(@Req() req: any) {
+    const result = await this.pantryFacade.getUserPantry(req.userId);
     return result;
   }
 
@@ -124,11 +129,23 @@ export class PantryController {
 
   @Get("user/:userId/meal-plan-missing-ingredients")
   async getMealPlanMissingIngredients(
-    @Param("userId") userId: string,
+    @Req() req: any,
     @Query() query: any
   ) {
     return await this.pantryFacade.getMealPlanMissingPantryItems({
-      userId,
+      userId: req.userId,
+      startDate: query?.startDate,
+      endDate: query?.endDate,
+    });
+  }
+
+  @Get("user/meal-plan-missing-ingredients")
+  async getCurrentUserMealPlanMissingIngredients(
+    @Req() req: any,
+    @Query() query: any
+  ) {
+    return await this.pantryFacade.getMealPlanMissingPantryItems({
+      userId: req.userId,
       startDate: query?.startDate,
       endDate: query?.endDate,
     });
@@ -136,10 +153,19 @@ export class PantryController {
 
   @Post("user/:userId/register-used-ingredients")
   async registerUsedIngredients(
-    @Param("userId") userId: string,
+    @Req() req: any,
     @Body() data: ConfirmCookRecipeDto[]
   ) {
-    const items = data.map((item) => ({ ...item, userId }));
+    const items = data.map((item) => ({ ...item, userId: req.userId }));
+    return await this.pantryFacade.registerRecipeAsCooked(items);
+  }
+
+  @Post("user/register-used-ingredients")
+  async registerCurrentUserUsedIngredients(
+    @Req() req: any,
+    @Body() data: ConfirmCookRecipeDto[]
+  ) {
+    const items = data.map((item) => ({ ...item, userId: req.userId }));
     return await this.pantryFacade.registerRecipeAsCooked(items);
   }
 }

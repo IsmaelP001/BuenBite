@@ -241,8 +241,8 @@ export class RecipeController {
 
   @Get("user")
   @UseInterceptors(RecipeAuthorInterceptor)
-  async getUserRecipes(@Param("userId") userId: string) {
-    const recipes = await this.recipesFacade.getUserRecipes(userId);
+  async getUserRecipes(@Req() req: any) {
+    const recipes = await this.recipesFacade.getUserRecipes(req.userId);
     return recipes;
   }
 
