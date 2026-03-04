@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { CacheModule } from "@nestjs/cache-manager";
-import { BullModule } from "@nestjs/bullmq";
+import { BullModule, getQueueToken } from "@nestjs/bullmq";
 import { GamificationController } from "../insfrastructure/controller/gamification-controller";
 import { GamificationFacadeImpl } from "../application/facades/gamification-facade";
 import {
@@ -23,25 +23,54 @@ import {
   ProcessGamificationEventUseCase,
   ProcessWeeklyRankingsUseCase,
 } from "../application/use-cases/gamification";
+import { createNoopQueue, isUpstashRestMode } from "./queue-fallback";
+
+const useUpstashRest = isUpstashRestMode();
+const queueImports = useUpstashRest
+  ? []
+  : [
+      BullModule.registerQueue({
+        name: GAMIFICATION_CRITICAL_QUEUE,
+      }),
+      BullModule.registerQueue({
+        name: GAMIFICATION_DEFERRED_QUEUE,
+      }),
+      BullModule.registerQueue({
+        name: GAMIFICATION_ALERTS_QUEUE,
+      }),
+      BullModule.registerQueue({
+        name: SOCIAL_QUEUE,
+      }),
+    ];
+const queueProviders = useUpstashRest
+  ? [
+      {
+        provide: getQueueToken(GAMIFICATION_CRITICAL_QUEUE),
+        useValue: createNoopQueue(GAMIFICATION_CRITICAL_QUEUE),
+      },
+      {
+        provide: getQueueToken(GAMIFICATION_DEFERRED_QUEUE),
+        useValue: createNoopQueue(GAMIFICATION_DEFERRED_QUEUE),
+      },
+      {
+        provide: getQueueToken(GAMIFICATION_ALERTS_QUEUE),
+        useValue: createNoopQueue(GAMIFICATION_ALERTS_QUEUE),
+      },
+      {
+        provide: getQueueToken(SOCIAL_QUEUE),
+        useValue: createNoopQueue(SOCIAL_QUEUE),
+      },
+    ]
+  : [];
 
 @Module({
   imports: [
     CacheModule.register(),
-    BullModule.registerQueue({
-      name: GAMIFICATION_CRITICAL_QUEUE,
-    }),
-    BullModule.registerQueue({
-      name: GAMIFICATION_DEFERRED_QUEUE,
-    }),
-    BullModule.registerQueue({
-      name: GAMIFICATION_ALERTS_QUEUE,
-    }),
-    BullModule.registerQueue({
-      name: SOCIAL_QUEUE,
-    }),
+    ...queueImports,
   ],
   controllers: [GamificationController],
   providers: [
+    ...queueProviders,
     GamificationCriticalProcessor,
     GamificationDeferredProcessor,
     GamificationAlertsProcessor,
