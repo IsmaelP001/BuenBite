@@ -346,7 +346,7 @@ const MobileSidebar = ({ onClose }: { onClose: () => void }) => {
       {/* Footer Actions */}
       <div className="border-t border-border p-4 space-y-3">
         <Button variant="hero" className="w-full" asChild>
-          <Link href="/auth" onClick={onClose}>
+          <Link href="/auth/signin" onClick={onClose}>
             <User className="h-4 w-4 mr-2" />
             Iniciar Sesión
           </Link>

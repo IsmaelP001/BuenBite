@@ -39,7 +39,9 @@ const Auth = () => {
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
               <ChefHat className="w-7 h-7 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">PantryChef</span>
+            <span className="font-display text-2xl font-bold">
+              Buen<span className="text-primary">Bite</span>
+            </span>{" "}
           </div>
         </div>
 
@@ -107,7 +109,7 @@ const Auth = () => {
               <div className="space-y-3">
                 <Button
                   onClick={async () => {
-                   await signInWith('google')
+                    await signInWith("google");
                   }}
                   variant="outline"
                   className="w-full h-12 text-base font-medium gap-3 hover:bg-secondary/80 transition-all"
