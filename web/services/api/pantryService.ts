@@ -17,7 +17,7 @@ export class PantryService {
   }
 
   async getPantryById(pantryId: string): Promise<ApiResponse<PantryItem>> {
-    return this.httpClient.get<PantryItem>(`pantry/${pantryId}`);
+    return this.httpClient.get<PantryItem>(`pantry/item/${pantryId}`);
   }
 
   async createPantryItem(data: CreatePantryDto[]): Promise<ApiResponse<PantryItem>> {
@@ -91,7 +91,7 @@ export class PantryService {
     pantryId: string,
     pagination?: { page?: number; limit?: number },
   ): Promise<ApiResponse<PantryTransaction[]>> {
-    return this.httpClient.get(`pantry/${pantryId}/transactions`, {
+    return this.httpClient.get(`pantry/item/${pantryId}/transactions`, {
       queryParams: {
         page: pagination?.page ?? 1,
         limit: pagination?.limit ?? 15,

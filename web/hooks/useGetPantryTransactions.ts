@@ -1,10 +1,12 @@
 'use client'
 import { getPantryTransactions } from "@/actions/pantry";
+import { useAuth } from "@/lib/context/authContext";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 export default function useGetPantryTransactions() {
   const { id } = useParams<{ id?: string }>();
+  const { user, loading } = useAuth();
   const limit = 15;
 
   return useInfiniteQuery({
@@ -17,7 +19,7 @@ export default function useGetPantryTransactions() {
       if (currentBatch.length < limit) return undefined;
       return allPages.length + 1;
     },
-    enabled: Boolean(id),
+    enabled: Boolean(id) && !loading && Boolean(user),
     staleTime: 60 * 60 * 60 * 24,
   });
 }
