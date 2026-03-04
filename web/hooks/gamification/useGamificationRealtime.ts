@@ -5,6 +5,8 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/context/authContext";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
+const supabase = createSupabaseClient();
+
 export interface RealtimePointsPayload {
   id: string;
   userId: string;
@@ -98,28 +100,25 @@ export function useGamificationRealtime({
 
   const cleanup = useCallback(() => {
     if (channelRef.current) {
-      const supabase = createSupabaseClient();
       supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     }
   }, []);
 
   useEffect(() => {
-
-    console.log("[Gamification Realtime] Setting up realtime listeners for user:", user);
-    if (!user?.id) return;
-
-    const supabase = createSupabaseClient();
+    const userId = user?.id;
+    console.log("[Gamification Realtime] Setting up realtime listeners for user:", userId);
+    if (!userId) return;
 
     const channel = supabase
-      .channel(`gamification:${user.id}`)
+      .channel(`gamification:${userId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: "points_log",
-          filter: `user_id=eq.${user.id}`,
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           try {
@@ -143,7 +142,7 @@ export function useGamificationRealtime({
           event: "INSERT",
           schema: "public",
           table: "gamification_alerts",
-          filter: `user_id=eq.${user.id}`,
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           try {
