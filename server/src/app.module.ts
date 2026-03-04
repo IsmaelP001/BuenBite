@@ -15,7 +15,22 @@ import { RecipeModule } from "./core/modules/recipes.module";
 import { SocialModule } from "./core/modules/social.module";
 import { UploadModule } from "./core/modules/upload.module";
 import { UserModule } from "./core/modules/user.module";
+import { isUpstashRestMode } from "./core/modules/queue-fallback";
 
+const queueModules = isUpstashRestMode()
+  ? []
+  : [
+      BullModule.forRootAsync({
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          connection: {
+            host: configService.get<string>("REDIS_HOST", "localhost"),
+            port: configService.get<number>("REDIS_PORT", 6379),
+          },
+        }),
+        inject: [ConfigService],
+      }),
+    ];
 
 @Module({
   imports: [
@@ -23,16 +38,7 @@ import { UserModule } from "./core/modules/user.module";
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          host: configService.get<string>('REDIS_HOST', 'localhost'),
-          port: configService.get<number>('REDIS_PORT', 6379),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    ...queueModules,
     CacheModule,
     MulterModule.register({
       storage: 'memory', 
