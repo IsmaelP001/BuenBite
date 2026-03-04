@@ -33,6 +33,12 @@ export class HttpClient {
 
   // Obtiene token y userId de forma lazy
   public static async getSessionData(): Promise<SessionData> {
+    // En servidor (SSR/RSC), NO reutilizar sesión en memoria:
+    // el runtime puede atender múltiples usuarios y filtrar datos cruzados.
+    if (typeof window === "undefined") {
+      return this.fetchSessionData();
+    }
+
     if (this.sessionData) return this.sessionData;
 
     const sessionData = await this.fetchSessionData();
@@ -119,7 +125,10 @@ export class HttpClient {
     options: RequestInit,
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, {
+        ...options,
+        cache: "no-store",
+      });
 
       const contentType = response.headers.get("content-type");
       let body: unknown = null;

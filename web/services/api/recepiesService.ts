@@ -254,7 +254,7 @@ export class RecipeService {
     filter: FilterMealplanMissingIngredients
   ): Promise<ApiResponse<MealPlanNutritionSummary>> {
     return await this.httpClient.get(
-      `pantry/user/${HttpClient.getCurrentUserId()}/meal-plan-missing-ingredients`,
+      "pantry/user/meal-plan-missing-ingredients",
       {
         queryParams: { startDate: filter?.startDate, endDate: filter?.endDate },
       }

@@ -122,9 +122,8 @@ export class MealplanService {
   async getMealPlanMissingPantryItems(
     filter: FilterMealplanMissingIngredients
   ): Promise<ApiResponse<IngredientsAnalysisResult<SuggestedMealIngredients>>> {
-    const userId = await HttpClient.getUserId();
     return await this.httpClient.get(
-      `pantry/user/${userId}/meal-plan-missing-ingredients`,
+      "pantry/user/meal-plan-missing-ingredients",
       {
         queryParams: { startDate: filter?.startDate, endDate: filter?.endDate },
       }
