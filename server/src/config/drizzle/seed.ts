@@ -4,12 +4,11 @@ import {
   ingredientsSchema,
   recipesSchema,
   recipeIngredientsSchema,
-  pantrySchema,
   suggestedMealPlanCategoriesSchema,
   suggestedMealPlansSchema,
   suggestedMealPlanRecipesSchema,
 } from "./schemas";
-import { v4 as uuidv4 } from "uuid";
+import { v5 as uuidv5 } from "uuid";
 const ingredientsJson = {
   ingredients: [
     {
@@ -2405,6 +2404,502 @@ const recipesJson = [
     tips: 33,
     comments: 20,
   },
+  {
+    id: "101",
+    userId: "user_101",
+    name: "Paella Valenciana",
+    description: "Arroz tradicional espanol con pollo, verduras y azafran",
+    prepTime: 30,
+    cookTime: 45,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 6,
+    dificulty: "medium",
+    mealTypes: ["lunch", "dinner"],
+    calories: 510.4,
+    proteins: 31.2,
+    fats: 16.4,
+    carbs: 58.3,
+    instructions: [
+      { step: "Sofreir cebolla, ajo y pimientos en la paellera." },
+      { step: "Agregar pollo en trozos y dorar bien." },
+      { step: "Incorporar tomate rallado y cocinar unos minutos." },
+      { step: "Anadir arroz, azafran y caldo caliente." },
+      { step: "Cocinar sin remover hasta que el arroz este en su punto." },
+      { step: "Reposar 5 minutos y servir con limon." },
+    ],
+    notes: "No remover el arroz para formar socarrat",
+    image:
+      "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 41,
+    comments: 26,
+  },
+  {
+    id: "102",
+    userId: "user_102",
+    name: "Gnocchi al Pesto",
+    description: "Gnocchi de papa con salsa pesto de albahaca",
+    prepTime: 25,
+    cookTime: 12,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 430.6,
+    proteins: 14.8,
+    fats: 19.7,
+    carbs: 49.2,
+    instructions: [
+      { step: "Hervir los gnocchi hasta que floten." },
+      { step: "Preparar pesto con albahaca, ajo, nueces y queso." },
+      { step: "Escurrir gnocchi reservando un poco de agua." },
+      { step: "Mezclar con pesto y unas cucharadas del agua de coccion." },
+      { step: "Ajustar sal y pimienta al gusto." },
+      { step: "Servir con queso rallado y hojas de albahaca." },
+    ],
+    notes: "No sobrecocer los gnocchi para evitar textura gomosa",
+    image:
+      "https://images.unsplash.com/photo-1611273426858-450c18422f77?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 29,
+    comments: 18,
+  },
+  {
+    id: "103",
+    userId: "user_103",
+    name: "Pad Thai de Camaron",
+    description: "Fideos salteados tailandeses con salsa agridulce",
+    prepTime: 25,
+    cookTime: 15,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 3,
+    dificulty: "medium",
+    mealTypes: ["lunch", "dinner"],
+    calories: 470.2,
+    proteins: 24.1,
+    fats: 14.6,
+    carbs: 59.4,
+    instructions: [
+      { step: "Hidratar fideos de arroz en agua tibia." },
+      { step: "Saltear ajo, camaron y tofu en wok caliente." },
+      { step: "Agregar huevo batido y revolver rapidamente." },
+      { step: "Incorporar fideos y salsa pad thai." },
+      { step: "Anadir brotes de soja y cebollin." },
+      { step: "Servir con cacahuate triturado y limon." },
+    ],
+    notes: "El wok debe estar muy caliente para un buen salteado",
+    image:
+      "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 37,
+    comments: 24,
+  },
+  {
+    id: "104",
+    userId: "user_104",
+    name: "Pollo Tikka Masala",
+    description: "Pollo especiado en salsa cremosa de tomate",
+    prepTime: 35,
+    cookTime: 30,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "medium",
+    mealTypes: ["dinner"],
+    calories: 520.8,
+    proteins: 34.7,
+    fats: 23.6,
+    carbs: 35.2,
+    instructions: [
+      { step: "Marinar pollo con yogur y especias durante 1 hora." },
+      { step: "Dorar el pollo en sarten a fuego alto." },
+      { step: "Sofreir cebolla, ajo, jengibre y pasta de tomate." },
+      { step: "Agregar leche de coco o crema y especias." },
+      { step: "Incorporar pollo y cocinar 15 minutos." },
+      { step: "Servir con arroz basmati y cilantro." },
+    ],
+    notes: "El marinado mejora textura y sabor del pollo",
+    image:
+      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 45,
+    comments: 30,
+  },
+  {
+    id: "105",
+    userId: "user_105",
+    name: "Enchiladas Verdes",
+    description: "Tortillas rellenas banadas en salsa verde",
+    prepTime: 30,
+    cookTime: 20,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 420.1,
+    proteins: 25.2,
+    fats: 17.9,
+    carbs: 38.5,
+    instructions: [
+      { step: "Cocer tomatillo, chile y cebolla para la salsa." },
+      { step: "Licuar salsa con cilantro y sazonar." },
+      { step: "Rellenar tortillas con pollo deshebrado." },
+      { step: "Doblar y colocar en refractario." },
+      { step: "Cubrir con salsa verde y queso." },
+      { step: "Hornear 10 minutos y servir con crema." },
+    ],
+    notes: "Freir ligeramente las tortillas evita que se rompan",
+    image:
+      "https://images.unsplash.com/photo-1534352956036-cd81e27dd615?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 34,
+    comments: 22,
+  },
+  {
+    id: "106",
+    userId: "user_106",
+    name: "Sopa Minestrone",
+    description: "Sopa italiana de verduras, pasta y legumbres",
+    prepTime: 20,
+    cookTime: 35,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 6,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 260.8,
+    proteins: 11.3,
+    fats: 6.5,
+    carbs: 39.7,
+    instructions: [
+      { step: "Sofreir cebolla, apio y zanahoria." },
+      { step: "Agregar tomate triturado y caldo vegetal." },
+      { step: "Incorporar papa, calabacin y frijoles." },
+      { step: "Cocinar 20 minutos a fuego medio." },
+      { step: "Anadir pasta corta y cocinar hasta estar al dente." },
+      { step: "Servir con parmesano y aceite de oliva." },
+    ],
+    notes: "Puedes usar las verduras de temporada que tengas",
+    image:
+      "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 28,
+    comments: 17,
+  },
+  {
+    id: "107",
+    userId: "user_107",
+    name: "Quesadillas de Champinon",
+    description: "Quesadillas doradas con relleno de champinon salteado",
+    prepTime: 15,
+    cookTime: 12,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 2,
+    dificulty: "easy",
+    mealTypes: ["breakfast", "lunch", "dinner"],
+    calories: 390.4,
+    proteins: 16.8,
+    fats: 18.2,
+    carbs: 38.1,
+    instructions: [
+      { step: "Saltear champinones con ajo y cebolla." },
+      { step: "Calentar tortillas en comal." },
+      { step: "Agregar queso y relleno de champinon." },
+      { step: "Doblar tortilla y cocinar por ambos lados." },
+      { step: "Retirar cuando el queso este derretido." },
+      { step: "Servir con salsa y guacamole." },
+    ],
+    notes: "Usa una mezcla de quesos para mejor sabor",
+    image:
+      "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 21,
+    comments: 14,
+  },
+  {
+    id: "108",
+    userId: "user_108",
+    name: "Lentejas Estofadas",
+    description: "Guiso casero de lentejas con verduras y especias",
+    prepTime: 15,
+    cookTime: 40,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 5,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 310.5,
+    proteins: 18.4,
+    fats: 7.2,
+    carbs: 44.9,
+    instructions: [
+      { step: "Sofreir cebolla, ajo, zanahoria y pimiento." },
+      { step: "Agregar lentejas lavadas y tomate." },
+      { step: "Incorporar caldo y laurel." },
+      { step: "Cocinar a fuego medio hasta suavizar lentejas." },
+      { step: "Ajustar sal, pimienta y comino." },
+      { step: "Servir con pan integral." },
+    ],
+    notes: "Quedan mejor de un dia para otro",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 32,
+    comments: 19,
+  },
+  {
+    id: "109",
+    userId: "user_109",
+    name: "Arroz Frito con Verduras",
+    description: "Arroz salteado estilo oriental rapido y sabroso",
+    prepTime: 15,
+    cookTime: 10,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 3,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 370.3,
+    proteins: 12.7,
+    fats: 10.8,
+    carbs: 54.6,
+    instructions: [
+      { step: "Usar arroz cocido del dia anterior." },
+      { step: "Saltear ajo y jengibre en wok." },
+      { step: "Agregar verduras picadas y cocinar 3 minutos." },
+      { step: "Incorporar arroz y mezclar bien." },
+      { step: "Anadir salsa de soya y aceite de sesamo." },
+      { step: "Servir con cebollin y semillas." },
+    ],
+    notes: "El arroz frio evita que se bata al saltear",
+    image:
+      "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 30,
+    comments: 18,
+  },
+  {
+    id: "110",
+    userId: "user_110",
+    name: "Albóndigas en Salsa de Tomate",
+    description: "Albondigas jugosas cocidas en salsa casera",
+    prepTime: 25,
+    cookTime: 30,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "medium",
+    mealTypes: ["lunch", "dinner"],
+    calories: 460.9,
+    proteins: 29.5,
+    fats: 21.1,
+    carbs: 31.8,
+    instructions: [
+      { step: "Mezclar carne molida con huevo, ajo y pan molido." },
+      { step: "Formar albondigas y sellar en sarten." },
+      { step: "Preparar salsa con tomate, cebolla y especias." },
+      { step: "Pasar albondigas a la salsa." },
+      { step: "Cocinar tapado 20 minutos." },
+      { step: "Servir con pasta o arroz." },
+    ],
+    notes: "No compactar demasiado la carne para textura suave",
+    image:
+      "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 36,
+    comments: 23,
+  },
+  {
+    id: "111",
+    userId: "user_111",
+    name: "Wrap de Atun y Yogur",
+    description: "Wrap fresco y proteico para comida rapida",
+    prepTime: 10,
+    cookTime: 0,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 2,
+    dificulty: "easy",
+    mealTypes: ["lunch"],
+    calories: 290.7,
+    proteins: 24.4,
+    fats: 8.9,
+    carbs: 27.3,
+    instructions: [
+      { step: "Mezclar atun con yogur, limon y mostaza." },
+      { step: "Agregar apio y cebolla morada picados." },
+      { step: "Calentar tortillas integrales." },
+      { step: "Rellenar con mezcla de atun y hojas verdes." },
+      { step: "Enrollar firmemente y cortar a la mitad." },
+      { step: "Servir de inmediato." },
+    ],
+    notes: "Ideal para llevar al trabajo",
+    image:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 19,
+    comments: 12,
+  },
+  {
+    id: "112",
+    userId: "user_112",
+    name: "Tostadas de Aguacate y Huevo",
+    description: "Desayuno completo con grasas saludables y proteina",
+    prepTime: 8,
+    cookTime: 7,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 2,
+    dificulty: "easy",
+    mealTypes: ["breakfast", "lunch"],
+    calories: 340.8,
+    proteins: 13.6,
+    fats: 21.3,
+    carbs: 22.9,
+    instructions: [
+      { step: "Tostar pan integral hasta dorar." },
+      { step: "Machacar aguacate con limon y sal." },
+      { step: "Cocinar huevos al gusto." },
+      { step: "Untar aguacate sobre el pan." },
+      { step: "Colocar huevo encima y condimentar." },
+      { step: "Servir con semillas y chile seco." },
+    ],
+    notes: "Puedes cambiar huevo por tofu para version vegana",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 25,
+    comments: 16,
+  },
+  {
+    id: "113",
+    userId: "user_113",
+    name: "Crema de Calabaza",
+    description: "Sopa cremosa y ligera de calabaza asada",
+    prepTime: 15,
+    cookTime: 30,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 220.6,
+    proteins: 5.3,
+    fats: 9.8,
+    carbs: 29.4,
+    instructions: [
+      { step: "Asar calabaza con cebolla y ajo." },
+      { step: "Licuar con caldo vegetal caliente." },
+      { step: "Pasar a olla y agregar leche evaporada." },
+      { step: "Sazonar con nuez moscada y pimienta." },
+      { step: "Cocinar 5 minutos a fuego bajo." },
+      { step: "Servir con semillas tostadas." },
+    ],
+    notes: "Si la quieres mas ligera usa solo caldo",
+    image:
+      "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 23,
+    comments: 15,
+  },
+  {
+    id: "114",
+    userId: "user_114",
+    name: "Poke Bowl de Salmon",
+    description: "Bowl hawaiano con salmon marinado y arroz",
+    prepTime: 20,
+    cookTime: 15,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 2,
+    dificulty: "medium",
+    mealTypes: ["lunch", "dinner"],
+    calories: 510.1,
+    proteins: 31.4,
+    fats: 18.8,
+    carbs: 52.2,
+    instructions: [
+      { step: "Cocer arroz y enfriar ligeramente." },
+      { step: "Cortar salmon fresco en cubos." },
+      { step: "Marinar con soya, limon y aceite de sesamo." },
+      { step: "Preparar pepino, zanahoria y edamame." },
+      { step: "Armar bowl con arroz y toppings." },
+      { step: "Terminar con ajonjoli y cebollin." },
+    ],
+    notes: "Usar salmon apto para consumo en crudo",
+    image:
+      "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&h=500&fit=crop",
+    rating: 5,
+    tips: 40,
+    comments: 27,
+  },
+  {
+    id: "115",
+    userId: "user_115",
+    name: "Frittata de Verduras",
+    description: "Tortilla horneada italiana con verduras de temporada",
+    prepTime: 15,
+    cookTime: 20,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "easy",
+    mealTypes: ["breakfast", "lunch", "dinner"],
+    calories: 300.2,
+    proteins: 17.9,
+    fats: 19.1,
+    carbs: 12.6,
+    instructions: [
+      { step: "Saltear cebolla, pimiento y espinaca." },
+      { step: "Batir huevos con sal y pimienta." },
+      { step: "Mezclar huevos con verduras y queso." },
+      { step: "Verter en sarten apta para horno." },
+      { step: "Hornear hasta cuajar y dorar la superficie." },
+      { step: "Reposar 5 minutos y cortar en porciones." },
+    ],
+    notes: "Excelente para aprovechar vegetales sobrantes",
+    image:
+      "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 26,
+    comments: 17,
+  },
+  {
+    id: "116",
+    userId: "user_116",
+    name: "Hamburguesa de Garbanzo",
+    description: "Burger vegetariana crujiente por fuera y suave por dentro",
+    prepTime: 20,
+    cookTime: 15,
+    isSharedCommunity: true,
+    includeInSuggestedRecipes: true,
+    servings: 4,
+    dificulty: "easy",
+    mealTypes: ["lunch", "dinner"],
+    calories: 360.4,
+    proteins: 14.7,
+    fats: 11.2,
+    carbs: 49.9,
+    instructions: [
+      { step: "Procesar garbanzo cocido con avena y especias." },
+      { step: "Formar hamburguesas del mismo tamano." },
+      { step: "Reposar 10 minutos para que tomen forma." },
+      { step: "Dorar en sarten con poco aceite." },
+      { step: "Montar en pan con lechuga y tomate." },
+      { step: "Servir con salsa de yogur o tahini." },
+    ],
+    notes: "Si la mezcla esta humeda, agrega mas avena",
+    image:
+      "https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=500&h=500&fit=crop",
+    rating: 4,
+    tips: 24,
+    comments: 15,
+  },
 ];
 
 const CATEGORY_KEYS: string[] = [
@@ -3134,82 +3629,223 @@ const mealplansuggestions = {
 };
 const mealTypesArr = ["breakfast", "lunch", "dinner"];
 
-async function seed() {
-  // const userId = uuidv4();
-  // await db.insert(usersSchema).values({
-  //   id: userId,
-  //   fullName: "Ismael perez",
-  //   email: "ismael@example.com",
-  // });
+const RECIPE_MULTIPLIER = Number(process.env.SEED_RECIPE_MULTIPLIER ?? "3");
+const SEED_NAMESPACE = uuidv5("good-bite.seed.namespace", uuidv5.DNS);
 
+type SeedIngredient = (typeof ingredientsJson.ingredients)[number];
+
+function ingredientKey(ingredient: Pick<SeedIngredient, "name_es" | "name_en" | "name_fr">): string {
+  return `${ingredient.name_es.trim().toLowerCase()}::${ingredient.name_en
+    .trim()
+    .toLowerCase()}::${ingredient.name_fr.trim().toLowerCase()}`;
+}
+
+function deterministicHash(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function deterministicId(scope: string, key: string): string {
+  return uuidv5(`${scope}:${key}`, SEED_NAMESPACE);
+}
+
+function deterministicInteger(key: string, min: number, max: number): number {
+  const range = max - min + 1;
+  return min + (deterministicHash(key) % range);
+}
+
+function deterministicFloat(
+  key: string,
+  min: number,
+  max: number,
+  decimals = 1
+): number {
+  const precision = 10 ** decimals;
+  const scaledMin = Math.round(min * precision);
+  const scaledMax = Math.round(max * precision);
+  const value = deterministicInteger(key, scaledMin, scaledMax);
+  return value / precision;
+}
+
+function deterministicFromArray<T>(arr: T[], key: string): T {
+  if (arr.length === 0) throw new Error("Array vacío en selección determinística");
+  const index = deterministicInteger(`${key}:idx`, 0, arr.length - 1);
+  return arr[index];
+}
+
+function pickDeterministicIngredients<T extends { id: string }>(
+  ingredients: T[],
+  count: number,
+  key: string
+): T[] {
+  if (ingredients.length === 0) return [];
+  const startIndex = deterministicInteger(`${key}:start`, 0, ingredients.length - 1);
+  const total = Math.min(count, ingredients.length);
+  const picked: T[] = [];
+  for (let i = 0; i < total; i++) {
+    picked.push(ingredients[(startIndex + i) % ingredients.length]);
+  }
+  return picked;
+}
+
+async function seed() {
   const usersIds = [
     "3ade2ef8-ec14-4fee-9dc6-4294f072a95c",
     "6ee0a5d8-ae12-4bca-8299-74b124bbbbf3",
-    '3f01349f-96e4-4186-81b1-da4cf956ed2b',
-    '0cb630c8-acf4-4ba9-8f0a-1bf7b5a12e01'
+    "3f01349f-96e4-4186-81b1-da4cf956ed2b",
+    "0cb630c8-acf4-4ba9-8f0a-1bf7b5a12e01",
   ];
 
-  const ingredientList = ingredientsJson.ingredients.map((item) => ({
-    ...item,
-    id: uuidv4(),
-  }));
+  await db
+    .insert(usersSchema)
+    .values(
+      usersIds.map((id, index) => ({
+        id,
+        fullName: `Seed User ${index + 1}`,
+        email: `seed-user-${index + 1}@goodbite.local`,
+      }))
+    )
+    .onConflictDoNothing();
 
-  const recipesJsonMap = recipesJson.map((recipe) => {
-    const recipeId = uuidv4();
+  const existingIngredients = await db
+    .select({
+      id: ingredientsSchema.id,
+      name_es: ingredientsSchema.name_es,
+      name_en: ingredientsSchema.name_en,
+      name_fr: ingredientsSchema.name_fr,
+      conversions: ingredientsSchema.conversions,
+    })
+    .from(ingredientsSchema);
+
+  const existingIngredientKeys = new Set(
+    existingIngredients.map((ingredient) => ingredientKey(ingredient))
+  );
+
+  const ingredientsToCreate = ingredientsJson.ingredients
+    .filter((ingredient) => !existingIngredientKeys.has(ingredientKey(ingredient)))
+    .map((ingredient) => ({
+      ...ingredient,
+      id: deterministicId("ingredient", ingredientKey(ingredient)),
+      isApproved: true,
+      isFilterActive: true,
+      creationType: "seed",
+    }));
+
+  if (ingredientsToCreate.length > 0) {
+    await db
+      .insert(ingredientsSchema)
+      .values(ingredientsToCreate as any)
+      .onConflictDoNothing();
+  }
+
+  const syncedIngredients = await db
+    .select({
+      id: ingredientsSchema.id,
+      name_es: ingredientsSchema.name_es,
+      name_en: ingredientsSchema.name_en,
+      name_fr: ingredientsSchema.name_fr,
+      conversions: ingredientsSchema.conversions,
+    })
+    .from(ingredientsSchema);
+
+  const ingredientByKey = new Map(
+    syncedIngredients.map((ingredient) => [ingredientKey(ingredient), ingredient])
+  );
+
+  const ingredientList = ingredientsJson.ingredients
+    .map((ingredient) => ingredientByKey.get(ingredientKey(ingredient)))
+    .filter((ingredient): ingredient is NonNullable<typeof ingredient> => Boolean(ingredient));
+
+  if (ingredientList.length === 0) {
+    throw new Error("No hay ingredientes disponibles para crear recetas.");
+  }
+
+  const recipesSource = Array.from(
+    { length: Math.max(1, RECIPE_MULTIPLIER) },
+    (_, batchIndex) =>
+      recipesJson.map((recipe, recipeIndex) => ({
+        seedKey: `${batchIndex}:${recipeIndex}:${recipe.name.toLowerCase()}`,
+        batchIndex,
+        recipeIndex,
+        ...recipe,
+        name:
+          RECIPE_MULTIPLIER > 1
+            ? `${recipe.name} v${batchIndex + 1}`
+            : recipe.name,
+      }))
+  ).flat();
+
+  const recipesJsonMap = recipesSource.map((recipe) => {
+    const recipeId = deterministicId("recipe", recipe.seedKey);
+    const ingredientsCount = deterministicInteger(
+      `${recipe.seedKey}:ingredients-count`,
+      4,
+      7
+    );
+    const selectedIngredients = pickDeterministicIngredients(
+      ingredientList,
+      ingredientsCount,
+      recipe.seedKey
+    );
 
     const ingredients = [];
-    const ingredientIds = []
+    const ingredientIds: string[] = [];
 
-    for (var i = 0; i < 5; i++) {
-      const ramdomIngredient =
-        ingredientList[Math.floor(Math.random() * ingredientList.length)];
-      const numberRandom = Math.floor(Math.random() * 100);
-      const measurementValue = numberRandom < 1 ? 5 : numberRandom;
-      const ingredientId = ramdomIngredient.id
-      ingredientIds.push(ingredientId)
-      const ingToAdd = {
-        id:uuidv4(),
+    for (const ingredient of selectedIngredients) {
+      const ingredientRecipeKey = `${recipe.seedKey}:${ingredient.id}`;
+      const allowedUnits = ingredient.conversions?.allowed_units ?? ["gram"];
+      const measurementType = deterministicFromArray(
+        allowedUnits,
+        `${ingredientRecipeKey}:unit`
+      );
+      const measurementValue =
+        measurementType === "gram" || measurementType === "milligram"
+          ? deterministicInteger(`${ingredientRecipeKey}:value`, 25, 350)
+          : deterministicInteger(`${ingredientRecipeKey}:value`, 1, 6);
+
+      ingredientIds.push(ingredient.id);
+      const ingredientToAdd = {
+        id: deterministicId("recipe-ingredient", `${recipeId}:${ingredient.id}`),
         recipeId,
-        ingredientId: ramdomIngredient.id,
-        ingredientName: ramdomIngredient.name_es,
-        measurementType:
-          ramdomIngredient.conversions?.allowed_units[
-            Math.floor(
-              Math.random() * ramdomIngredient.conversions.allowed_units.length
-            )
-          ],
-        measurementValue: measurementValue,
+        ingredientId: ingredient.id,
+        ingredientName: ingredient.name_es,
+        measurementType,
+        measurementValue,
       };
-      ingredients.push(ingToAdd);
+      ingredients.push(ingredientToAdd);
     }
+
     return {
       ...recipe,
       id: recipeId,
       ingredientIds,
-      rating: Math.floor(Math.random() * 5),
-      userId: usersIds?.[Math.floor(Math.random() * usersIds.length)],
+      rating: deterministicInteger(`${recipe.seedKey}:rating`, 0, 4),
+      userId: deterministicFromArray(usersIds, `${recipe.seedKey}:user`),
       ingredients,
     };
   });
 
   const mealplanCategoriesJsonToCreate =
-    mealplanCategoriesJson.suggestedMealPlanCategories.map((item) => ({
+    mealplanCategoriesJson.suggestedMealPlanCategories.map((item, index) => ({
       ...item,
-      id: uuidv4(),
+      id: deterministicId("mealplan-category", `${index}:${item.name}`),
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
 
   const mealplanSuggestionsJsonToCreate =
-    mealplansuggestions.suggestedMealPlans.map((item) => {
-      const randomIndex = Math.floor(
-        Math.random() * mealplanCategoriesJsonToCreate.length
+    mealplansuggestions.suggestedMealPlans.map((item, index) => {
+      const category = deterministicFromArray(
+        mealplanCategoriesJsonToCreate,
+        `${index}:${item.name}:category`
       );
-      const categoryId = mealplanCategoriesJsonToCreate[randomIndex]?.id;
       return {
         ...item,
-        id: uuidv4(),
-        categoryId,
+        id: deterministicId("mealplan-suggestion", `${index}:${item.name}`),
+        categoryId: category.id,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -3218,60 +3854,61 @@ async function seed() {
 
   let suggestedMealplanRecipes: any[] = [];
   mealplanSuggestionsJsonToCreate.forEach((item) => {
-    for (var i = 0; i < 5; i++) {
-      const randomRecipeIndex = Math.floor(
-        Math.random() * mealplanSuggestionsJsonToCreate.length
+    for (let i = 0; i < 5; i++) {
+      const mealplanRecipeKey = `${item.id}:${i + 1}`;
+      const selectedRecipe = deterministicFromArray(
+        recipesJsonMap,
+        `${mealplanRecipeKey}:recipe`
+      );
+      const mealType = deterministicFromArray(
+        mealTypesArr,
+        `${mealplanRecipeKey}:meal-type`
       );
       const suggestedMealRecipeToAdd = {
-        id: uuidv4(),
+        id: deterministicId("mealplan-recipe", mealplanRecipeKey),
         suggestedMealPlanId: item.id,
-        recipeId: recipesJsonMap[randomRecipeIndex]?.id,
-        mealType:
-          mealTypesArr?.[Math.floor(Math.random() * mealTypesArr.length)],
+        recipeId: selectedRecipe.id,
+        mealType,
         dayNumber: i + 1,
       };
       suggestedMealplanRecipes.push(suggestedMealRecipeToAdd);
     }
   });
 
-
-  console.log('recipes',recipesJsonMap)
-  
-
-  await db
-    .insert(ingredientsSchema)
-    .values(ingredientList as any)
-    .onConflictDoNothing();
-
   await db
     .insert(suggestedMealPlanCategoriesSchema)
-    .values(mealplanCategoriesJsonToCreate);
+    .values(mealplanCategoriesJsonToCreate)
+    .onConflictDoNothing();
   await db
     .insert(suggestedMealPlansSchema)
-    .values(mealplanSuggestionsJsonToCreate);
+    .values(mealplanSuggestionsJsonToCreate)
+    .onConflictDoNothing();
 
   for (const recipe of recipesJsonMap) {
-    const shareCommunity = [true,false]
+    const shareCommunity = [true, false];
     await db
       .insert(recipesSchema)
       .values({
         id: recipe.id,
-        userId: usersIds?.[Math.floor(Math.random() * usersIds.length)],
+        userId: recipe.userId,
         name: recipe.name,
         description: recipe.description,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
-        ingredientIds:recipe.ingredientIds,
-        isSharedCommunity:shareCommunity?.[Math.floor(Math.random() * shareCommunity.length)],
+        ingredientIds: recipe.ingredientIds,
+        isSharedCommunity: deterministicFromArray(
+          shareCommunity,
+          `${recipe.seedKey}:community`
+        ),
         mealTypes: recipe.mealTypes,
         dificulty: "easy",
-        servings: recipe.servings, 
+        servings: recipe.servings,
         instructions: recipe.instructions,
         image: recipe.image,
-        calories: Math.random() * 350,
-        proteins: Math.random() * 280,
-        fats: Math.random() * 390,
-        carbs: Math.random() * 410,
+        calories: deterministicFloat(`${recipe.seedKey}:calories`, 120, 650, 1),
+        proteins: deterministicFloat(`${recipe.seedKey}:proteins`, 8, 65, 1),
+        fats: deterministicFloat(`${recipe.seedKey}:fats`, 4, 45, 1),
+        carbs: deterministicFloat(`${recipe.seedKey}:carbs`, 12, 90, 1),
       })
       .onConflictDoNothing();
   }
@@ -3280,13 +3917,19 @@ async function seed() {
     (item) => item.ingredients
   );
 
-  await db.insert(recipeIngredientsSchema).values(recipeIngredientsToInsert);
+  await db
+    .insert(recipeIngredientsSchema)
+    .values(recipeIngredientsToInsert)
+    .onConflictDoNothing();
 
   await db
     .insert(suggestedMealPlanRecipesSchema)
-    .values(suggestedMealplanRecipes);
+    .values(suggestedMealplanRecipes)
+    .onConflictDoNothing();
 
-  console.log("Seed completado con éxito.");
+  console.log(
+    `Seed completado con éxito. Ingredientes disponibles: ${ingredientList.length}. Recetas creadas: ${recipesJsonMap.length}.`
+  );
 }
 
 seed().catch((err) => {
