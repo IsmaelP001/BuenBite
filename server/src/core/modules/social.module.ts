@@ -1,6 +1,6 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
-import { BullModule } from "@nestjs/bullmq";
+import { BullModule, getQueueToken } from "@nestjs/bullmq";
 import { SocialFacadeImpl } from "../application/facades/social-facade";
 import { SocialServiceImpl } from "../application/services/social-service-impl";
 import { SocialProcessor, SOCIAL_QUEUE } from "../application/services/social-processor";
@@ -9,18 +9,35 @@ import { SocialController } from "../insfrastructure/controller/social-controlle
 import { SocialRepositoryImpl } from "../insfrastructure/repositories/social-repository-impl";
 import { GamificationModule } from "./gamification.module";
 import { UploadModule } from "./upload.module";
+import { createNoopQueue, isUpstashRestMode } from "./queue-fallback";
+
+const useUpstashRest = isUpstashRestMode();
+const queueImports = useUpstashRest
+  ? []
+  : [
+      BullModule.registerQueue({
+        name: SOCIAL_QUEUE,
+      }),
+    ];
+const queueProviders = useUpstashRest
+  ? [
+      {
+        provide: getQueueToken(SOCIAL_QUEUE),
+        useValue: createNoopQueue(SOCIAL_QUEUE),
+      },
+    ]
+  : [];
 
 @Module({
   imports: [
     CacheModule.register(),
-    BullModule.registerQueue({
-      name: SOCIAL_QUEUE,
-    }),
+    ...queueImports,
     GamificationModule,
     UploadModule,
   ],
   controllers: [SocialController],
   providers: [
+    ...queueProviders,
     SocialProcessor,
     {
       provide: "SocialFacade",
