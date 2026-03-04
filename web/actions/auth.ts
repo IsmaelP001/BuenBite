@@ -17,7 +17,7 @@ export const signInWith = async (provider: Providers) => {
       redirectTo: auth_callback_url,
       queryParams: {
         access_type: "offline",
-        prompt: "consent",
+        prompt: "select_account consent",
       },
     },
   });
