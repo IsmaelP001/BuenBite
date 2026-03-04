@@ -13,8 +13,7 @@ export class PantryService {
   constructor(private httpClient: HttpClient) {}
 
   async getUserPantryItems(): Promise<ApiResponse<PantryItem[]>> {
-    const userId = await HttpClient.getUserId();
-    return this.httpClient.get<PantryItem[]>(`pantry/user/${userId}`);
+    return this.httpClient.get<PantryItem[]>("pantry/user");
   }
 
   async getPantryById(pantryId: string): Promise<ApiResponse<PantryItem>> {
