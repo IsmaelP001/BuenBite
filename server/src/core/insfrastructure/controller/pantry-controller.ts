@@ -26,12 +26,12 @@ export class PantryController {
     private readonly pantryFacade: PantryFacade
   ) {}
 
-  @Get(":pantryId")
+  @Get("item/:pantryId")
   async getPantryById(@Param("pantryId") pantryId: string) {
     return await this.pantryFacade.getPantryById(pantryId);
   }
 
-  @Get(":ingredientId/transactions")
+  @Get("item/:ingredientId/transactions")
   async getPantryTransactions(
     @Param("ingredientId") ingredientId: string,
     @Query("page") page?: string,
