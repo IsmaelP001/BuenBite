@@ -5,7 +5,6 @@ import {
   Bell,
   Shield,
   Palette,
-  LogOut,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
+import SignOutButton from "@/components/settings/SignOutButton";
 
 export const dynamic = "force-dynamic";
 
@@ -133,13 +133,7 @@ const Settings = async() => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-destructive hover:text-destructive"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Cerrar sesión
-                </Button>
+                <SignOutButton />
                 <Button variant="destructive" className="w-full justify-start">
                   Eliminar mi cuenta
                 </Button>

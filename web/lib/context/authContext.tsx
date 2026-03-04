@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       HttpClient.resetSession();
       setUser(null);
-      queryClient.invalidateQueries();
+      queryClient.clear();
 
       router.push("/");
       router.refresh();
@@ -102,14 +102,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           setUser(session.user);
           setLoading(false);
-          queryClient.invalidateQueries();
+          queryClient.clear();
         } else if (event === "SIGNED_OUT") {
           setUser(null);
           setLoading(false);
-          queryClient.invalidateQueries();
+          queryClient.clear();
         } else {
           await getUser();
-          queryClient.invalidateQueries();
+          queryClient.clear();
         }
 
         if (event === "SIGNED_IN")    console.log("Usuario ha iniciado sesión");
