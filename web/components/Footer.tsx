@@ -228,7 +228,7 @@ const Footer = () => {
             <div className="container py-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className="text-sm text-muted-foreground text-center md:text-left">
-                  © {new Date().getFullYear()} KitchenCraft. Todos los derechos
+                  © {new Date().getFullYear()} BuenBite. Todos los derechos
                   reservados.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
