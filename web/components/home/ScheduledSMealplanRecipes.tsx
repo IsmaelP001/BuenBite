@@ -16,7 +16,7 @@ export default async function ScheduledSMealplanRecipes() {
           <h2 className="font-display text-xl font-semibold">Comidas de Hoy</h2>
         </div>
         <Link
-          href="/calories-tracking"
+          href="/tracking"
           className="text-sm font-medium text-primary hover:underline"
         >
           Ver Calendario
@@ -25,7 +25,7 @@ export default async function ScheduledSMealplanRecipes() {
 
       {mealScheduled?.data?.length ? (
         <div className="flex flex-nowrap gap-3 overflow-x-auto">
-          {mealScheduled?.data?.map((meal, index) => (
+          {mealScheduled?.data?.map((meal) => (
             <ScheduledMealCard key={meal.id} {...meal} />
           ))}
         </div>

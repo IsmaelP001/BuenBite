@@ -14,6 +14,7 @@ import {
   ShoppingCart,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -77,18 +78,16 @@ export default function PantryIngredientInfo() {
 
   return (
     <section className="mb-10 animate-fade-in">
-      {/* Header with smaller image */}
       <div className="flex flex-col md:flex-row gap-6 mb-8">
-        {/* Smaller Image */}
         <div className="relative w-full md:w-48 h-48 md:h-48 rounded-2xl overflow-hidden card-shadow shrink-0">
-          <img
+          <Image
             src={pantryItem.image}
             alt={pantryItem.name.es}
             className="w-full h-full object-cover"
+            width={200}
+            height={200}
           />
           <div className="absolute inset-0 bg-linear-to-t from-foreground/40 via-transparent to-transparent" />
-
-          {/* Category Badge */}
           <div className="absolute top-3 left-3">
             <span
               className={cn(
@@ -100,7 +99,6 @@ export default function PantryIngredientInfo() {
             </span>
           </div>
 
-          {/* Quick Actions */}
           <div className="absolute top-3 right-3 flex gap-1.5">
             <button className="p-1.5 rounded-full bg-card/90 backdrop-blur-sm hover:bg-card transition-colors">
               <Heart className="h-4 w-4 text-foreground" />
@@ -111,7 +109,6 @@ export default function PantryIngredientInfo() {
           </div>
         </div>
 
-        {/* Title and Expiry Info */}
         <div className="flex-1">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
