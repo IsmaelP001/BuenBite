@@ -47,8 +47,8 @@ const CardContent = ({
 
   return (
     <>
-      <div className="relative overflow-hidden">
-        <div className="relative aspect-4/3 overflow-hidden">
+      <div className="relative overflow-hidden rounded-lg" >
+        <div className="relative aspect-4/3 overflow-hidden rounded-lg">
           <Image
             width={200}
             height={200}
