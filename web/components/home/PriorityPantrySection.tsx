@@ -10,7 +10,6 @@ import { ChefHat, Sparkles, ShoppingCart, TrendingDown, Brain } from "lucide-rea
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { getUserPantryItems } from "@/actions/pantry";
-import { PantryItem } from "@/types/models/pantry";
 
 export default async function PriorityPantrySection() {
   const queryClient = new QueryClient();
