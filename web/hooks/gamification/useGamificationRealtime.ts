@@ -110,70 +110,93 @@ export function useGamificationRealtime({
     console.log("[Gamification Realtime] Setting up realtime listeners for user:", userId);
     if (!userId) return;
 
-    const channel = supabase
-      .channel(`gamification:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "points_log",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          try {
-            const data = mapSnakeToCamelPoints(
-              payload.new as Record<string, unknown>,
-            );
-            onPointsRef.current?.(data);
-            console.error("[Gamification Realtime]  points payload:", payload);
-          } catch (err) {
-            console.error(
-              "[Gamification Realtime] Error mapping points payload:",
-              err,
-              payload,
-            );
-          }
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "gamification_alerts",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          try {
-            const data = mapSnakeToCamelAlert(
-              payload.new as Record<string, unknown>,
-            );
-            onAlertRef.current?.(data);
-            console.error("[Gamification Realtime]  alert payload:", payload);
-          } catch (err) {
-            console.error(
-              "[Gamification Realtime] Error mapping alert payload:",
-              err,
-              payload,
-            );
-          }
-        },
-      )
-      .subscribe((status, err) => {
-        if (status === "SUBSCRIBED") {
-          console.log("[Gamification Realtime] Subscribed successfully");
-        } else if (status === "CHANNEL_ERROR") {
-          console.error("[Gamification Realtime] Channel error:", err);
-        } else if (status === "TIMED_OUT") {
-          console.warn("[Gamification Realtime] Subscription timed out");
-        } else {
-          console.log("[Gamification Realtime] Status:", status);
-        }
-      });
+    let cancelled = false;
 
-    channelRef.current = channel;
+    const setupRealtime = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    return cleanup;
+      if (session?.access_token) {
+        supabase.realtime.setAuth(session.access_token);
+      } else {
+        console.warn(
+          "[Gamification Realtime] No access token found. Realtime may connect as anon.",
+        );
+      }
+
+      if (cancelled) return;
+
+      const channel = supabase
+        .channel(`gamification:${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "points_log",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            try {
+              const data = mapSnakeToCamelPoints(
+                payload.new as Record<string, unknown>,
+              );
+              onPointsRef.current?.(data);
+              console.error("[Gamification Realtime]  points payload:", payload);
+            } catch (err) {
+              console.error(
+                "[Gamification Realtime] Error mapping points payload:",
+                err,
+                payload,
+              );
+            }
+          },
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "gamification_alerts",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            try {
+              const data = mapSnakeToCamelAlert(
+                payload.new as Record<string, unknown>,
+              );
+              onAlertRef.current?.(data);
+              console.error("[Gamification Realtime]  alert payload:", payload);
+            } catch (err) {
+              console.error(
+                "[Gamification Realtime] Error mapping alert payload:",
+                err,
+                payload,
+              );
+            }
+          },
+        )
+        .subscribe((status, err) => {
+          if (status === "SUBSCRIBED") {
+            console.log("[Gamification Realtime] Subscribed successfully");
+          } else if (status === "CHANNEL_ERROR") {
+            console.error("[Gamification Realtime] Channel error:", err);
+          } else if (status === "TIMED_OUT") {
+            console.warn("[Gamification Realtime] Subscription timed out");
+          } else {
+            console.log("[Gamification Realtime] Status:", status);
+          }
+        });
+
+      channelRef.current = channel;
+    };
+
+    void setupRealtime();
+
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
   }, [user?.id, cleanup]);
 }
