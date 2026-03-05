@@ -52,7 +52,7 @@ const CardContent = ({
           <Image
             width={200}
             height={200}
-            src={hasValidImage ? normalizedImage : "/file.svg"}
+            src={hasValidImage ? normalizedImage : "/apple-background.jpg"}
             alt={`pantry-image-${name.es}`}
             className=" object-cover transition-transform duration-500 group-hover:scale-105"
           />

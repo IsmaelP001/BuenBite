@@ -14,7 +14,6 @@ import {
   PantryTransactionsFilter,
 } from "../../domain/pantry.model";
 import { PantryRepository } from "../../domain/repositories";
-import e from "express";
 
 @Injectable()
 export class PantryRepositoryImpl implements PantryRepository {
