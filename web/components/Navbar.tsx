@@ -8,6 +8,7 @@ import {
   Flame,
   History,
   Lightbulb,
+  LogOut,
   LucideIcon,
   Menu,
   Package,
@@ -42,7 +43,8 @@ import {
 import { mealTypes } from "@/lib/config";
 import MaxWidthWrapper from "./MaxWithWrapper";
 import { useRecipeFilters } from "@/hooks/useFilterRecipes";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
+import { useAuth } from "@/lib/context/authContext";
 
 const RecipesMegaMenu = dynamic(() => import("./RecipesNavbarMenu"), {
   ssr: false,
@@ -51,8 +53,11 @@ const PurchasesMegaMenu = dynamic(() => import("./PurchaseNavbarMenu"), {
   ssr: false,
 });
 const NavbarUserBadge = dynamic(
-  () => import("./gamification/NavbarUserBadge").then((m) => ({ default: m.NavbarUserBadge })),
-  { ssr: false }
+  () =>
+    import("./gamification/NavbarUserBadge").then((m) => ({
+      default: m.NavbarUserBadge,
+    })),
+  { ssr: false },
 );
 interface NavLinkProps {
   href: string;
@@ -80,7 +85,6 @@ const MAIN_NAV_LINKS: NavLinkProps[] = [
   { href: "/social", label: "Comunidad" },
   { href: "/tracking", label: "Calorías" },
 ];
-
 
 export const PANTRY_LINKS: QuickLink[] = [
   { icon: Package, label: "Mi Despensa", href: "/pantry" },
@@ -111,14 +115,11 @@ const MOBILE_SECTIONS: MenuSection[] = [
   { title: "Comunidad", links: COMMUNITY_LINKS },
 ];
 
-
 export const RECIPES_QUICK_LINKS: QuickLink[] = [
   { icon: Star, label: "Mis Favoritas", href: "/user/favorites" },
   { icon: History, label: "Guardadas", href: "/user/recipes" },
   { icon: Plus, label: "Crear Receta", href: "/recipes/create" },
 ];
-
-
 
 interface NavLinkComponentProps extends NavLinkProps {
   activeClassName?: string;
@@ -149,10 +150,6 @@ const NavLink = ({
   );
 };
 
-
-
-
-
 interface QuickLinkComponentProps {
   icon: LucideIcon;
   label: string;
@@ -181,7 +178,7 @@ export const QuickLinkComponent = ({
           "p-2 rounded-lg transition-colors",
           isPrimary
             ? "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
-            : "bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground"
+            : "bg-secondary text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground",
         )}
       >
         <Icon className={cn(isPrimary ? "h-5 w-5" : "h-4 w-4")} />
@@ -191,7 +188,7 @@ export const QuickLinkComponent = ({
           "transition-colors",
           isPrimary
             ? "font-medium"
-            : "text-sm text-muted-foreground group-hover:text-foreground"
+            : "text-sm text-muted-foreground group-hover:text-foreground",
         )}
       >
         {label}
@@ -210,9 +207,11 @@ export const SectionHeader = ({ title }: SectionHeaderProps) => (
   </h3>
 );
 
-
 const MobileSidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
+  const { user, signOut } = useAuth();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   const { ingredients } = useRecipeFilters({
     searchValue: "",
     ingredientsLimit: 6,
@@ -225,17 +224,23 @@ const MobileSidebar = ({ onClose }: { onClose: () => void }) => {
 
   const handleIngredientClick = (ingredientId: string) => {
     router.push(
-      `/recipes?ingredientIds=${ingredientId}&filterType=ingredientIds`
+      `/recipes?ingredientIds=${ingredientId}&filterType=ingredientIds`,
     );
     onClose();
   };
+
+  const handleSignOut=async()=>{
+    setIsSigningOut(true);
+    await signOut();
+    setIsSigningOut(false)
+  }
 
   return (
     <div className="flex flex-col h-full">
       <nav className="flex-1 overflow-y-auto py-4">
         <div className="px-4 mb-6">
           <SectionHeader title="Recetas" />
-          
+
           <Collapsible defaultOpen={false} className="mb-4">
             <CollapsibleTrigger className="flex items-center justify-between w-full px-2 py-2 hover:bg-accent rounded-lg transition-colors group">
               <h4 className="text-xs font-semibold text-muted-foreground">
@@ -343,19 +348,29 @@ const MobileSidebar = ({ onClose }: { onClose: () => void }) => {
         ))}
       </nav>
 
-      {/* Footer Actions */}
       <div className="border-t border-border p-4 space-y-3">
-        <Button variant="hero" className="w-full" asChild>
-          <Link href="/auth/signin" onClick={onClose}>
-            <User className="h-4 w-4 mr-2" />
-            Iniciar Sesión
-          </Link>
-        </Button>
+        {user ? (
+          <Button
+            variant="ghost"
+            className="justify-start text-destructive hover:text-destructive"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {isSigningOut ? "Cerrando sesión..." : "Logout"}
+          </Button>
+        ) : (
+          <Button variant="hero" className="w-full" asChild>
+            <Link href="/auth/signin" onClick={onClose}>
+              <User className="h-4 w-4 mr-2" />
+              Iniciar Sesión
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );
 };
-
 
 interface SearchBarProps {
   isExpanded: boolean;
@@ -391,15 +406,13 @@ const SearchBar = ({
     <div
       className={cn(
         "flex items-center gap-4 transition-all duration-300",
-        isExpanded
-          ? "absolute left-1/2 -translate-x-1/2 w-[85%]"
-          : "relative"
+        isExpanded ? "absolute left-1/2 -translate-x-1/2 w-[85%]" : "relative",
       )}
     >
       <div
         className={cn(
           "relative flex items-center gap-2 rounded-full bg-secondary px-4 py-2 transition-all duration-300",
-          isExpanded ? "w-full" : "w-auto"
+          isExpanded ? "w-full" : "w-auto",
         )}
       >
         <Search className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -412,7 +425,7 @@ const SearchBar = ({
           onFocus={onExpand}
           className={cn(
             "bg-transparent text-sm outline-none placeholder:text-muted-foreground transition-all duration-300",
-            isExpanded ? "w-full" : "w-24 md:w-40"
+            isExpanded ? "w-full" : "w-24 md:w-40",
           )}
         />
 
@@ -447,9 +460,7 @@ const SearchBar = ({
 
             <div>
               {isPending ? (
-                <p className="p-4 text-sm text-muted-foreground">
-                  Cargando...
-                </p>
+                <p className="p-4 text-sm text-muted-foreground">Cargando...</p>
               ) : recipes && recipes.length > 0 ? (
                 recipes.map((recipe) => (
                   <Button
@@ -474,7 +485,6 @@ const SearchBar = ({
   );
 };
 
-
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -497,7 +507,7 @@ const Navbar = () => {
           <div
             className={cn(
               "flex items-center gap-8 transition-all duration-300",
-              isSearchExpanded && "opacity-0 pointer-events-none"
+              isSearchExpanded && "opacity-0 pointer-events-none",
             )}
           >
             <NavLink
@@ -513,7 +523,7 @@ const Navbar = () => {
             <nav className="hidden lg:flex items-center gap-1">
               {MAIN_NAV_LINKS.map((link) => {
                 const hasMenu = hasMenuLinks.includes(
-                  link.href.replace("/", "")
+                  link.href.replace("/", ""),
                 );
 
                 if (hasMenu) {
@@ -560,7 +570,7 @@ const Navbar = () => {
           <div
             className={cn(
               "relative z-20 flex items-center gap-3 transition-all duration-300",
-              isSearchExpanded && "opacity-0 pointer-events-none"
+              isSearchExpanded && "opacity-0 pointer-events-none",
             )}
           >
             <NavbarUserBadge />
