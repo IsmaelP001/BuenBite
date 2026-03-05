@@ -88,6 +88,7 @@ export interface PantryItemResponse {
   measurementValue: number;
   lowValueAlert?: number;
   updatedAt: string;
+  image?: string;
   name: {
     es: string;
     en: string;
@@ -484,6 +485,7 @@ export class Pantry {
       isRecurrent: this.isRecurrentItem,
       recurrentAmount: this.recurrentAmount,
       brand: this._data.brand ?? null,
+      image: this._meta?.image,
       measurementType: this.measurementType,
       pendingPurchaseQuantity: this.pendingPurchaseQuantity,
       measurementValue: this.measurementValue,
