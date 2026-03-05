@@ -5,7 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { PantryItem } from "@/types/models/pantry";
 import { isValidUrl } from "@/lib/utils";
-import { categoryColors } from "@/lib/constants/ingredient-category-colors";
+import {
+  categoryColors,
+  categoryNamesEs,
+} from "@/lib/constants/ingredient-category-colors";
 
 
 
@@ -38,6 +41,10 @@ const CardContent = ({
 }: Omit<IngredientCardProps, "id" | "onSelect"> & {
   ingredientId?: string;
 }) => {
+  const normalizedImage = image?.trim();
+  const hasValidImage = Boolean(normalizedImage) &&
+    (normalizedImage.startsWith("/") || isValidUrl(normalizedImage));
+
   return (
     <>
       <div className="relative overflow-hidden">
@@ -45,7 +52,7 @@ const CardContent = ({
           <Image
             width={200}
             height={200}
-            src={isValidUrl(image) ? image : "/api/placeholder/400/300"}
+            src={hasValidImage ? normalizedImage : "/file.svg"}
             alt={`pantry-image-${name.es}`}
             className=" object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -80,7 +87,7 @@ const CardContent = ({
               categoryColors[category] || "bg-gray-600 text-white"
             )}
           >
-            {category}
+            {categoryNamesEs[category] || category}
           </span>
         </div>
 
