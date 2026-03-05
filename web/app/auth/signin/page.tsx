@@ -36,11 +36,9 @@ const Auth = () => {
             Volver al inicio
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-              <ChefHat className="w-7 h-7 text-white" />
-            </div>
-            <span className="font-display text-2xl font-bold">
-              Buen<span className="text-primary">Bite</span>
+            <span className="font-display text-4xl font-bold">
+              <span className="text-white">Buen</span>
+              Bite
             </span>{" "}
           </div>
         </div>
@@ -76,7 +74,7 @@ const Auth = () => {
 
         <div className="relative z-10">
           <p className="text-white/60 text-sm">
-            © 2024 PantryChef. Todos los derechos reservados.
+            © 2026 BuenBite. Todos los derechos reservados.
           </p>
         </div>
       </div>
@@ -90,7 +88,7 @@ const Auth = () => {
               <ChefHat className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold text-foreground">
-              PantryChef
+              Buen<span className="text-white">Bite</span>
             </span>
           </div>
 

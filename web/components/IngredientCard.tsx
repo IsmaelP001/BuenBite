@@ -3,18 +3,11 @@ import React from "react";
 import { Calendar, AlertCircle, X, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { PantryItem } from "@/types/models/pantry";
+import { isValidUrl } from "@/lib/utils";
+import { categoryColors } from "@/lib/constants/ingredient-category-colors";
 
-interface PantryItem {
-  id: string;
-  ingredientId?: string;
-  image: string;
-  name: { es: string };
-  measurementValue: number;
-  measurementType: string;
-  category: string;
-  isExpiring?: boolean;
-  expirationDate?: string;
-}
+
 
 interface IngredientCardProps extends PantryItem {
   selectable?: boolean;
@@ -27,14 +20,8 @@ const cn = (...classes: (string | boolean | undefined)[]) => {
   return classes.filter(Boolean).join(" ");
 };
 
-const isValidUrl = (url: string) => {
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
-  }
-};
+
+
 
 const CardContent = ({
   image,
@@ -51,22 +38,6 @@ const CardContent = ({
 }: Omit<IngredientCardProps, "id" | "onSelect"> & {
   ingredientId?: string;
 }) => {
-  const categoryColors: Record<string, string> = {
-    Dairy: "bg-blue-500",
-    Meat: "bg-rose-500",
-    Produce: "bg-green-500",
-    Grains: "bg-amber-500",
-    Lácteos: "bg-blue-500",
-    Carnes: "bg-rose-500",
-    Frutas: "bg-green-500",
-    Verduras: "bg-emerald-500",
-  };
-
-  const handleViewDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log(`Ver detalles de: ${ingredientId}`);
-  };
-
   return (
     <>
       <div className="relative overflow-hidden">
@@ -105,8 +76,8 @@ const CardContent = ({
         <div className="absolute bottom-3 left-3">
           <span
             className={cn(
-              "text-white px-3 py-1 rounded-full text-sm font-medium",
-              categoryColors[category] || "bg-gray-500"
+              "px-3 py-1 rounded-full text-sm font-medium",
+              categoryColors[category] || "bg-gray-600 text-white"
             )}
           >
             {category}
@@ -116,7 +87,6 @@ const CardContent = ({
         {selectable && (
           <Link
             href={`pantry/${ingredientId}`}
-            onClick={handleViewDetails}
             className="absolute right-[50%] translate-x-[50%] top-[50%] translate-y-[50%] flex items-center gap-2 bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100 shadow-sm text-nowrap z-10"
           >
             <Eye className="h-4 w-4" />
@@ -157,6 +127,7 @@ const IngredientCard = ({
   isSelected = false,
   onSelect,
   onRemoveSelected,
+  ...rest
 }: IngredientCardProps) => {
   const handleCardClick = () => {
     if (selectable && onSelect && ingredientId) {
@@ -183,6 +154,7 @@ const IngredientCard = ({
       isSelected={isSelected}
       onRemoveSelected={onRemoveSelected}
       ingredientId={ingredientId}
+      {...rest}
     />
   );
 

@@ -2,11 +2,12 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
-import { isValidUrl } from "@/lib/utils";
+import { cn, isValidUrl } from "@/lib/utils";
 import Image from "next/image";
 import { usePantryIngredientSelection } from "@/lib/context/pantryIngredientContext";
 import IngredientSelectorModal from "./IngredientSelectorModal";
 import Link from "next/link";
+import { categoryColors } from "@/lib/constants/ingredient-category-colors";
 
 export default function IngredientListContai() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -20,7 +21,7 @@ export default function IngredientListContai() {
     isSelected,
     removeIngredient,
   } = usePantryIngredientSelection();
- 
+
   return (
     <>
       <section>
@@ -51,10 +52,18 @@ export default function IngredientListContai() {
                       height={300}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    <span
+                      className={cn(
+                        "px-3 py-1 rounded-full text-xs font-medium absolute bottom-2 left-2 ",
+                        categoryColors[ingredient.category] || "bg-gray-600 text-white",
+                      )}
+                    >
+                      {ingredient.category}
+                    </span>
                   </div>
 
                   <div className="hidden hover:block">
-                    <Link href={''}>Ver receta</Link>
+                    <Link href={""}>Ver receta</Link>
                   </div>
                   {isIngSelected && (
                     <button className="absolute top-2 right-2 bg-primary rounded-full p-1.5">
@@ -62,7 +71,8 @@ export default function IngredientListContai() {
                     </button>
                   )}
 
-                  <div className="p-4">
+                  <div className="p-4 ">
+                    
                     <h3 className="font-display font-medium  mb-1 group-hover:text-primary transition-colors">
                       {ingredient.name}
                     </h3>

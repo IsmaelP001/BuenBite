@@ -1,4 +1,5 @@
 import { db } from "./db";
+import { and, eq, sql } from "drizzle-orm";
 import {
   usersSchema,
   ingredientsSchema,
@@ -924,7 +925,351 @@ const ingredientsJson = {
   ],
 };
 
-const recipesJson = [
+const DEFAULT_VOLUME_PER_UNIT = {
+  cup: 240,
+  tablespoon: 15,
+  teaspoon: 5,
+  milliliter: 1,
+  liter: 1000,
+  fluid_ounce: 29.57,
+  pint: 473.2,
+  quart: 946.4,
+  gallon: 3785,
+};
+
+const DEFAULT_ALLOWED_UNITS = [
+  "gram",
+  "grams",
+  "g",
+  "kilogram",
+  "kilograms",
+  "kg",
+  "milligram",
+  "milligrams",
+  "mg",
+  "ounce",
+  "ounces",
+  "oz",
+  "pound",
+  "pounds",
+  "lb",
+  "milliliter",
+  "milliliters",
+  "ml",
+  "liter",
+  "liters",
+  "l",
+  "cup",
+  "cups",
+  "tablespoon",
+  "tablespoons",
+  "tbsp",
+  "teaspoon",
+  "teaspoons",
+  "tsp",
+  "pint",
+  "pints",
+  "quart",
+  "quarts",
+  "gallon",
+  "gallons",
+  "fluid_ounce",
+  "fluid_ounces",
+];
+
+const ingredientImageOverrides: Record<string, string> = {
+  rice_white:
+    "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200&h=1200&fit=crop",
+  pasta_spaghetti:
+    "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=1200&h=1200&fit=crop",
+  tomatoes_roma:
+    "https://images.unsplash.com/photo-1546470427-e5ac89a4b74d?w=1200&h=1200&fit=crop",
+  onions_yellow:
+    "https://images.unsplash.com/photo-1508747703725-719777637510?w=1200&h=1200&fit=crop",
+  garlic:
+    "https://images.unsplash.com/photo-1615477550927-6ec8445dc2eb?w=1200&h=1200&fit=crop",
+  lemons:
+    "https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?w=1200&h=1200&fit=crop",
+  chicken_breast:
+    "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=1200&h=1200&fit=crop",
+  ground_beef:
+    "https://images.unsplash.com/photo-1603046891744-76e6481a7d95?w=1200&h=1200&fit=crop",
+  carrots:
+    "https://images.unsplash.com/photo-1447175008436-054170c2e979?w=1200&h=1200&fit=crop",
+  potatoes_russet:
+    "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=1200&h=1200&fit=crop",
+  flour_all_purpose:
+    "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=1200&h=1200&fit=crop",
+  sugar_granulated:
+    "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=1200&h=1200&fit=crop",
+  butter_unsalted:
+    "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=1200&h=1200&fit=crop",
+  eggs_whole:
+    "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=1200&h=1200&fit=crop",
+  milk_whole:
+    "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=1200&h=1200&fit=crop",
+  salt:
+    "https://images.unsplash.com/photo-1518110925495-5fe2fda0442d?w=1200&h=1200&fit=crop",
+  baking_powder:
+    "https://images.unsplash.com/photo-1611250188496-e966043a0629?w=1200&h=1200&fit=crop",
+  vanilla_extract:
+    "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=1200&h=1200&fit=crop",
+  olive_oil:
+    "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1200&h=1200&fit=crop",
+  water:
+    "https://images.unsplash.com/photo-1495774539583-885e02cca8c2?w=1200&h=1200&fit=crop",
+};
+
+function createAdditionalIngredient(input: {
+  id: string;
+  name_es: string;
+  name_en: string;
+  name_fr: string;
+  category: string;
+  image: string;
+  notes: string;
+  alias: string[];
+  calories_100g: number;
+  protein_100g: number;
+  fat_100g: number;
+  carbohydrates_100g: number;
+  density: number;
+  weight_per_unit: Record<string, number>;
+}) {
+  return {
+    ...input,
+    conversions: {
+      density: input.density,
+      weight_per_unit: {
+        gram: 1,
+        milligram: 0.001,
+        kilogram: 1000,
+        ounce: 28.35,
+        pound: 453.6,
+        ...input.weight_per_unit,
+      },
+      volume_per_unit: DEFAULT_VOLUME_PER_UNIT,
+      allowed_units: DEFAULT_ALLOWED_UNITS,
+    },
+  };
+}
+
+const additionalIngredients = [
+  createAdditionalIngredient({
+    id: "broccoli_raw",
+    name_es: "Brocoli",
+    name_en: "Broccoli",
+    name_fr: "Brocoli",
+    category: "vegetables",
+    image:
+      "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["brocoli", "broccoli"],
+    calories_100g: 34,
+    protein_100g: 2.82,
+    fat_100g: 0.37,
+    carbohydrates_100g: 6.64,
+    density: 0.5,
+    weight_per_unit: { cup_chopped: 91, floret: 15 },
+  }),
+  createAdditionalIngredient({
+    id: "spinach_raw",
+    name_es: "Espinaca",
+    name_en: "Spinach",
+    name_fr: "Epinard",
+    category: "vegetables",
+    image:
+      "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["espinaca", "spinach"],
+    calories_100g: 23,
+    protein_100g: 2.86,
+    fat_100g: 0.39,
+    carbohydrates_100g: 3.63,
+    density: 0.3,
+    weight_per_unit: { cup: 30, bunch: 340 },
+  }),
+  createAdditionalIngredient({
+    id: "avocado_hass",
+    name_es: "Aguacate hass",
+    name_en: "Hass avocado",
+    name_fr: "Avocat hass",
+    category: "fruits",
+    image:
+      "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["aguacate", "avocado"],
+    calories_100g: 160,
+    protein_100g: 2,
+    fat_100g: 14.66,
+    carbohydrates_100g: 8.53,
+    density: 0.9,
+    weight_per_unit: { avocado: 200, half_avocado: 100 },
+  }),
+  createAdditionalIngredient({
+    id: "banana_raw",
+    name_es: "Platano",
+    name_en: "Banana",
+    name_fr: "Banane",
+    category: "fruits",
+    image:
+      "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["platano", "banana", "banane"],
+    calories_100g: 89,
+    protein_100g: 1.09,
+    fat_100g: 0.33,
+    carbohydrates_100g: 22.84,
+    density: 0.94,
+    weight_per_unit: { banana: 118, slice: 7 },
+  }),
+  createAdditionalIngredient({
+    id: "apple_red",
+    name_es: "Manzana roja",
+    name_en: "Red apple",
+    name_fr: "Pomme rouge",
+    category: "fruits",
+    image:
+      "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["manzana", "apple", "pomme"],
+    calories_100g: 52,
+    protein_100g: 0.26,
+    fat_100g: 0.17,
+    carbohydrates_100g: 13.81,
+    density: 0.85,
+    weight_per_unit: { apple: 182, slice: 20 },
+  }),
+  createAdditionalIngredient({
+    id: "strawberry_raw",
+    name_es: "Fresa",
+    name_en: "Strawberry",
+    name_fr: "Fraise",
+    category: "fruits",
+    image:
+      "https://images.unsplash.com/photo-1518635017498-87f514b751ba?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["fresa", "strawberry", "fraise"],
+    calories_100g: 32,
+    protein_100g: 0.67,
+    fat_100g: 0.3,
+    carbohydrates_100g: 7.68,
+    density: 0.75,
+    weight_per_unit: { cup_sliced: 166, strawberry: 12 },
+  }),
+  createAdditionalIngredient({
+    id: "salmon_atlantic",
+    name_es: "Salmon atlantico",
+    name_en: "Atlantic salmon",
+    name_fr: "Saumon atlantique",
+    category: "seafood",
+    image:
+      "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["salmon", "saumon"],
+    calories_100g: 208,
+    protein_100g: 20.42,
+    fat_100g: 13.42,
+    carbohydrates_100g: 0,
+    density: 1.02,
+    weight_per_unit: { fillet: 154, steak: 200 },
+  }),
+  createAdditionalIngredient({
+    id: "shrimp_raw",
+    name_es: "Camaron",
+    name_en: "Shrimp",
+    name_fr: "Crevette",
+    category: "seafood",
+    image:
+      "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["camaron", "shrimp", "crevette"],
+    calories_100g: 85,
+    protein_100g: 20.1,
+    fat_100g: 0.51,
+    carbohydrates_100g: 0.2,
+    density: 1.03,
+    weight_per_unit: { shrimp_large: 15, cup: 145 },
+  }),
+  createAdditionalIngredient({
+    id: "chickpeas_cooked",
+    name_es: "Garbanzos cocidos",
+    name_en: "Cooked chickpeas",
+    name_fr: "Pois chiches cuits",
+    category: "legumes",
+    image:
+      "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["garbanzo", "chickpea", "pois chiche"],
+    calories_100g: 164,
+    protein_100g: 8.86,
+    fat_100g: 2.59,
+    carbohydrates_100g: 27.42,
+    density: 0.75,
+    weight_per_unit: { cup: 164, tablespoon: 10.3 },
+  }),
+  createAdditionalIngredient({
+    id: "black_beans_cooked",
+    name_es: "Frijoles negros cocidos",
+    name_en: "Cooked black beans",
+    name_fr: "Haricots noirs cuits",
+    category: "legumes",
+    image:
+      "https://images.unsplash.com/photo-1612257999898-2f8018f45f07?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["frijol negro", "black beans", "haricot noir"],
+    calories_100g: 132,
+    protein_100g: 8.86,
+    fat_100g: 0.54,
+    carbohydrates_100g: 23.71,
+    density: 0.78,
+    weight_per_unit: { cup: 172, tablespoon: 10.8 },
+  }),
+  createAdditionalIngredient({
+    id: "oats_raw",
+    name_es: "Avena",
+    name_en: "Oats",
+    name_fr: "Avoine",
+    category: "grains_and_cereals",
+    image:
+      "https://images.unsplash.com/photo-1517093157656-b9eccef91cb1?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["avena", "oats", "avoine"],
+    calories_100g: 389,
+    protein_100g: 16.89,
+    fat_100g: 6.9,
+    carbohydrates_100g: 66.27,
+    density: 0.41,
+    weight_per_unit: { cup: 80, tablespoon: 5 },
+  }),
+  createAdditionalIngredient({
+    id: "cheddar_cheese",
+    name_es: "Queso cheddar",
+    name_en: "Cheddar cheese",
+    name_fr: "Fromage cheddar",
+    category: "dairy_and_cheese",
+    image:
+      "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=1200&h=1200&fit=crop",
+    notes: "Valor nutricional por 100 g basado en USDA FoodData Central.",
+    alias: ["cheddar", "queso", "fromage"],
+    calories_100g: 403,
+    protein_100g: 24.9,
+    fat_100g: 33.1,
+    carbohydrates_100g: 1.28,
+    density: 1.05,
+    weight_per_unit: { slice: 28, cup_shredded: 113 },
+  }),
+];
+
+const ingredientsCatalog = [
+  ...ingredientsJson.ingredients,
+  ...additionalIngredients,
+].map((ingredient) => ({
+  ...ingredient,
+  image: ingredientImageOverrides[ingredient.id] ?? ingredient.image,
+}));
+
+const recipesJsonRaw = [
   {
     id: "45",
     userId: "user_045",
@@ -3628,11 +3973,51 @@ const mealplansuggestions = {
   ],
 };
 const mealTypesArr = ["breakfast", "lunch", "dinner"];
+const RECIPE_ALLOWED_UNITS: string[] = [
+  "gram",
+  "grams",
+  "g",
+  "kilogram",
+  "kilograms",
+  "kg",
+  "milligram",
+  "milligrams",
+  "mg",
+  "ounce",
+  "ounces",
+  "oz",
+  "pound",
+  "pounds",
+  "lb",
+  "milliliter",
+  "milliliters",
+  "ml",
+  "liter",
+  "liters",
+  "l",
+  "cup",
+  "cups",
+  "tablespoon",
+  "tablespoons",
+  "tbsp",
+  "teaspoon",
+  "teaspoons",
+  "tsp",
+  "pint",
+  "pints",
+  "quart",
+  "quarts",
+  "gallon",
+  "gallons",
+  "fluid_ounce",
+  "fluid_ounces",
+];
+const recipesJson = recipesJsonRaw.filter((recipe) => Number(recipe.id) < 100);
 
 const RECIPE_MULTIPLIER = Number(process.env.SEED_RECIPE_MULTIPLIER ?? "3");
 const SEED_NAMESPACE = uuidv5("good-bite.seed.namespace", uuidv5.DNS);
 
-type SeedIngredient = (typeof ingredientsJson.ingredients)[number];
+type SeedIngredient = (typeof ingredientsCatalog)[number];
 
 function ingredientKey(ingredient: Pick<SeedIngredient, "name_es" | "name_en" | "name_fr">): string {
   return `${ingredient.name_es.trim().toLowerCase()}::${ingredient.name_en
@@ -3724,7 +4109,7 @@ async function seed() {
     existingIngredients.map((ingredient) => ingredientKey(ingredient))
   );
 
-  const ingredientsToCreate = ingredientsJson.ingredients
+  const ingredientsToCreate = ingredientsCatalog
     .filter((ingredient) => !existingIngredientKeys.has(ingredientKey(ingredient)))
     .map((ingredient) => ({
       ...ingredient,
@@ -3755,13 +4140,30 @@ async function seed() {
     syncedIngredients.map((ingredient) => [ingredientKey(ingredient), ingredient])
   );
 
-  const ingredientList = ingredientsJson.ingredients
+  const ingredientList = ingredientsCatalog
     .map((ingredient) => ingredientByKey.get(ingredientKey(ingredient)))
     .filter((ingredient): ingredient is NonNullable<typeof ingredient> => Boolean(ingredient));
 
   if (ingredientList.length === 0) {
     throw new Error("No hay ingredientes disponibles para crear recetas.");
   }
+
+  for (const ingredient of ingredientsCatalog) {
+    await db
+      .update(ingredientsSchema)
+      .set({ image: ingredient.image })
+      .where(
+        and(
+          eq(ingredientsSchema.name_es, ingredient.name_es),
+          eq(ingredientsSchema.name_en, ingredient.name_en),
+          eq(ingredientsSchema.name_fr, ingredient.name_fr)
+        )
+      );
+  }
+
+  await db.execute(
+    sql`TRUNCATE TABLE "suggested_meal_plan_recipes", "recipe_ingredients", "recipes" CASCADE`
+  );
 
   const recipesSource = Array.from(
     { length: Math.max(1, RECIPE_MULTIPLIER) },
@@ -3796,9 +4198,8 @@ async function seed() {
 
     for (const ingredient of selectedIngredients) {
       const ingredientRecipeKey = `${recipe.seedKey}:${ingredient.id}`;
-      const allowedUnits = ingredient.conversions?.allowed_units ?? ["gram"];
       const measurementType = deterministicFromArray(
-        allowedUnits,
+        RECIPE_ALLOWED_UNITS,
         `${ingredientRecipeKey}:unit`
       );
       const measurementValue =
