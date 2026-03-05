@@ -12,10 +12,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getGlobalLevel, getNextLevel, getXpProgress } from "@/lib/gamification-constants";
 
-/**
- * Shows the XP badge (circular progress + level) for authenticated users,
- * or a plain User icon button for guests.
- */
+
 export function NavbarUserBadge() {
   const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
