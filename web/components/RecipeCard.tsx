@@ -30,11 +30,6 @@ const RecipeCard = ({
         <div className="absolute top-3 right-3 flex gap-2">
           <SaveRecipeBtn key={id} recipeId={id} size="sm" />
         </div>
-        <div className="absolute bottom-3 left-3">
-          <span className="ingredient-badge bg-foreground/90 text-background">
-            {"category"}
-          </span>
-        </div>
         {views && (
           <div className="absolute bottom-3 right-3 flex items-center gap-1 text-xs bg-card/90 backdrop-blur-sm px-2 py-1 rounded-full">
             <Eye className="h-3 w-3" />
