@@ -35,9 +35,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const getUser = useCallback(async () => {
     try {
       const sessionResponse = await getSession();
-      const sessionUser = sessionResponse?.data?.session?.user ?? null;
+      const serverSession = sessionResponse?.data?.session ?? null;
+      const sessionUser = serverSession?.user ?? null;
 
       if (sessionUser) {
+        if (serverSession.access_token && serverSession.refresh_token) {
+          const { error: setSessionError } = await supabase.auth.setSession({
+            access_token: serverSession.access_token,
+            refresh_token: serverSession.refresh_token,
+          });
+
+          if (setSessionError) {
+            console.error(
+              "Error sincronizando sesión cliente para Realtime:",
+              setSessionError,
+            );
+          } else {
+            supabase.realtime.setAuth(serverSession.access_token);
+          }
+        }
+
         setUser(sessionUser);
         return;
       }
@@ -100,6 +117,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event: AuthChangeEvent, session: Session | null) => {
         HttpClient.resetSession();
         if (session?.user) {
+          if (session.access_token) {
+            supabase.realtime.setAuth(session.access_token);
+          }
           setUser(session.user);
           setLoading(false);
           queryClient.clear();
